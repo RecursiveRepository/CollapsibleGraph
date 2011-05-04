@@ -7,6 +7,7 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -17,4 +18,5 @@ public interface CollapsibleGraph {
 
     public Set<Node> getNodes();
     public Set<Edge> getEdges();
+    public Map<String, Node> getNodeNameMap();
 }

@@ -17,7 +17,8 @@ public interface Node {
     public Set<Edge> getIncomingEdgeSet();
     public String getName();
 
-
     @Override
     public int hashCode();
+
+    public double getDistance(Node otherNode);
 }
