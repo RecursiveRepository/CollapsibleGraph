@@ -18,6 +18,7 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
     public DendrogramNode cluster(Set<Node> theNodes) {
 
     }
+    
 
     public Set<DendrogramNode> createLeafNodes(Set<Node> theNodes) {
         Set<DendrogramNode> dendrogramNodeSet
