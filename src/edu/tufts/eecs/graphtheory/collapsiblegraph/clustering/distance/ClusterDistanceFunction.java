@@ -16,3 +16,4 @@ public interface ClusterDistanceFunction {
     public double findDistance(DendrogramNode firstCluster, DendrogramNode secondCluster);
 
 }
+
