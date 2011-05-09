@@ -20,8 +20,11 @@ public class IntNode extends SkeletonNode{
         return value;
     }
     
-    public double getDistance(IntNode otherIntNode) {
-     return Math.abs(value - otherIntNode.getValue());   
+    public double getDistance(Node otherIntNode) {
+     if(!(otherIntNode instanceof IntNode)) {
+         throw new RuntimeException("It appears you're trying to compare IntNodes with non-IntNodes.");
+     }
+     return Math.abs(value - ((IntNode)otherIntNode).getValue());   
     }
     
 }
