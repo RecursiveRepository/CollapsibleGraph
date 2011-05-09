@@ -33,8 +33,7 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
         for (Node collapsibleGraphNode : collapsibleGraphNodes) {
             //Create the DendrogramLeafNode to hold this Node
             DendrogramNode newDNodeSet = new LeafDendrogramNode(collapsibleGraphNode);
-            initialDNodeSet.add(newDNodeSet);
-
+            
             //As these new Dendrograms are top-level, they must have nodes for topLevelClusters
             Set<Node> singletonClusterSet = new HashSet<Node>();
             singletonClusterSet.add(collapsibleGraphNode);
@@ -48,6 +47,8 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
                 clusterPair.add(newDNodeSet);
                 distanceMap.put(findDistance(newDNodeSet, dNode, topLevelClusterMap), clusterPair);
             }
+            //We do this last to avoid self-comparisons.
+            initialDNodeSet.add(newDNodeSet);
         }
         
         //A loop that runs until the we have only a single pairing left.
