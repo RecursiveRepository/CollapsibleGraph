@@ -22,32 +22,31 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
 
     public DendrogramNode cluster(Set<Node> collapsibleGraphNodes) {
         
-        //Node to hold the current set of clusters in a top-level DendrogramNode. This is an optimization as each DendrogramNode has a function
+        //Map to hold the current set of Node clusters in a top-level DendrogramNode. This is an optimization as each DendrogramNode has a function
         //to retrieve the set of child nodes.
-        Map<DendrogramNode, Set<Node>> topLevelClusters = new HashMap<DendrogramNode, Set<Node>>();
-        //Set of all DendrogramNodes
-        Set<DendrogramNode> dendrogramNodeSet = new HashSet<DendrogramNode>();
+        Map<DendrogramNode, Set<Node>> topLevelClusterMap = new HashMap<DendrogramNode, Set<Node>>();
         //Map of distances to the pair of DendrogramNodes they separate
         TreeMap<Double, Set<DendrogramNode>> distanceMap = new TreeMap<Double, Set<DendrogramNode>>();
         
+        Set<DendrogramNode> initialDNodeSet = new HashSet<DendrogramNode>();
         //This loop turns the set of Nodes from the input into a set of singleton DendrogramNodes
         for (Node collapsibleGraphNode : collapsibleGraphNodes) {
             //Create the DendrogramLeafNode to hold this Node
-            DendrogramNode newDendrogramNode = new LeafDendrogramNode(collapsibleGraphNode);
-            dendrogramNodeSet.add(newDendrogramNode);
+            DendrogramNode newDNodeSet = new LeafDendrogramNode(collapsibleGraphNode);
+            initialDNodeSet.add(newDNodeSet);
 
             //As these new Dendrograms are top-level, they must have nodes for topLevelClusters
-            Set<Node> singleSet = new HashSet<Node>();
-            singleSet.add(collapsibleGraphNode);
-            topLevelClusters.put(newDendrogramNode, singleSet);
+            Set<Node> singletonClusterSet = new HashSet<Node>();
+            singletonClusterSet.add(collapsibleGraphNode);
+            topLevelClusterMap.put(newDNodeSet, singletonClusterSet);
             
             //A loop to calculate the distance between this DendrogramNode and each singleton DendrogramNode that we've already added
             //In so doing this will make sure we have each of the pairings necessary
-            for(DendrogramNode dendrogramNode : dendrogramNodeSet) {
+            for(DendrogramNode dNode : initialDNodeSet) {
                 Set<DendrogramNode> clusterPair = new HashSet<DendrogramNode>();
-                clusterPair.add(dendrogramNode);
-                clusterPair.add(newDendrogramNode);
-                distanceMap.put(findDistance(newDendrogramNode, dendrogramNode, topLevelClusters), clusterPair);
+                clusterPair.add(dNode);
+                clusterPair.add(newDNodeSet);
+                distanceMap.put(findDistance(newDNodeSet, dNode, topLevelClusterMap), clusterPair);
             }
         }
         
@@ -59,41 +58,40 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
            Map<Double, Set<DendrogramNode>> mapEntriesToAdd = new HashMap<Double, Set<DendrogramNode>>();
            
            //Retrieve the lowest-distance pair 
-           Map.Entry<Double, Set<DendrogramNode>> lowestDistancePair = distanceMap.firstEntry();
+           Map.Entry<Double, Set<DendrogramNode>> lowestDistancePairEntry = distanceMap.firstEntry();
            //Store the lowest distance Double and the pair of DendrogramNodes that they represent
-           Double formerClosestPairDistance = lowestDistancePair.getKey();
-           Set<DendrogramNode> formerClosestPairSet = lowestDistancePair.getValue();
+           Double formerClosestPairDistance = lowestDistancePairEntry.getKey();
+           Set<DendrogramNode> formerClosestPairSet = lowestDistancePairEntry.getValue();
            //Create a new DendrogramNodeset to join the pair
 
-           DendrogramNode newClusterNode = new ClusterDendrogramNode(formerClosestPairSet, formerClosestPairDistance);
+           DendrogramNode newClusterDNode = new ClusterDendrogramNode(formerClosestPairSet, formerClosestPairDistance);
            
            //Update the topLevelClusters map to lose the old top level clusters and add the new one
            Set<Node> newTopLevelCluster = new HashSet<Node>();
            for(DendrogramNode newlyClusteredNode : formerClosestPairSet) {
-               newTopLevelCluster.addAll(topLevelClusters.remove(newlyClusteredNode));
+               newTopLevelCluster.addAll(topLevelClusterMap.remove(newlyClusteredNode));
            }
-           topLevelClusters.put(newClusterNode, newTopLevelCluster);    
+           topLevelClusterMap.put(newClusterDNode, newTopLevelCluster);    
            
            //List this old pairing for removal from the distance map
            distanceMap.remove(formerClosestPairDistance); 
            
            //A loop to recalculate each distance pair that involved either of the joined pair
-           for(Double currentDistance : distanceMap.keySet()) {
-               Set<DendrogramNode> clusterPair = distanceMap.get(currentDistance);
-               DendrogramNode pairingNode = null;
-               for(DendrogramNode eachDendrogramNode : clusterPair) {
-                   if(formerClosestPairSet.contains(eachDendrogramNode)) {
-                           formerClosestPairSet.remove(eachDendrogramNode);
+           for(Double preClusterDistance : distanceMap.keySet()) {
+               Set<DendrogramNode> preClusterPair = distanceMap.get(preClusterDistance);
+               for(DendrogramNode newlyClusteredDNode : preClusterPair) {
+                   if(formerClosestPairSet.contains(newlyClusteredDNode)) {
+                           formerClosestPairSet.remove(newlyClusteredDNode);
                            if(formerClosestPairSet.size()!=1) {
                                throw new RuntimeException("There's no good reason for a pair to have had anything but 2 nodes!");
                            }
                    //Sketchy way to retrieve the other node from this set
-                   DendrogramNode onlyNode = (DendrogramNode)(formerClosestPairSet.toArray())[0];
-                   Double newClusterDistance = findDistance(onlyNode, eachDendrogramNode, topLevelClusters);
+                   DendrogramNode onlyDNode = (DendrogramNode)(formerClosestPairSet.toArray())[0];
+                   Double postClusterDistance = findDistance(onlyDNode, newlyClusteredDNode, topLevelClusterMap);
                    
                    //Replace the former node with the newly formed Cluster node
-                   formerClosestPairSet.add(newClusterNode);
-                   mapEntriesToAdd.put(newClusterDistance, formerClosestPairSet);
+                   formerClosestPairSet.add(newClusterDNode);
+                   mapEntriesToAdd.put(postClusterDistance, formerClosestPairSet);
                    }
                }
            }
