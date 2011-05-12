@@ -54,7 +54,7 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
         }
 
         //A loop that runs until the we have only a single pairing left.
-        while (distanceMap.size() > 1) {
+        while (distanceMap.size() > 2) {
             distanceMap.clusterClosestPair(topLevelClusterMap);
         }
         
@@ -132,7 +132,8 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
             
             Set<Set<DendrogramNode>> setToAlter = distanceToSetMap.get(distanceToSetMap.firstKey());
             setToAlter.remove(lowestMember);
-
+            numOfElements--;
+            
             //Create new ClusterDendrogramNode to pair the closest pair
             DendrogramNode newClusterDNode = new ClusterDendrogramNode(lowestMember, lowestDistance);
 
@@ -160,6 +161,7 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
                         if (preClusterPair.contains(newlyClusteredDNode)) {
                             
                             setIterator.remove();
+                            numOfElements--;
                             preClusterPair.remove(newlyClusteredDNode);
                             
                             if (preClusterPair.size() != 1) {
@@ -186,7 +188,10 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
             }
             
             for(Double distanceToAdd : mappingsToAdd.keySet())  {
+                int numberBefore = distanceToSetMap.get(distanceToAdd).size();
                 distanceToSetMap.get(distanceToAdd).addAll(mappingsToAdd.get(distanceToAdd));
+                int numberAfter = distanceToSetMap.get(distanceToAdd).size();
+                numOfElements = numOfElements + (numberAfter - numberBefore);
             }
             
             //Actually do the work of adding and removing mappings from system
