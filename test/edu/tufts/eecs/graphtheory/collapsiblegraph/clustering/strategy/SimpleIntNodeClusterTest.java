@@ -17,10 +17,8 @@ import org.junit.Test;
  */
 public class SimpleIntNodeClusterTest {
 
-   // private int[] inputIntegers = {2, 4, 8, 16, 32};
-
-      private int[] inputIntegers = {2, 4, 8};
-
+    private int[] inputIntegers = {2, 4, 8, 16, 32,64,128,256,512,1024,2048};
+    
     @Test
     public void testCluster() {
         Set<Node> inputNodes = new HashSet<Node>();
@@ -29,6 +27,7 @@ public class SimpleIntNodeClusterTest {
         }
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
+        Set<DendrogramNode> clusters = root.partitionByDistance(5.0);
         System.out.println("All done.");
     }
 }
