@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
@@ -14,32 +10,36 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  *
- * @author Jeremy
+ * @author Jeremy Freeman jeremy@jgfreeman.com
  */
 public class SingleLinkClusteringStrategy implements ClusteringStrategy {
 
-    public DendrogramNode cluster(Set<Node> collapsibleGraphNodes) {
+    /**
+     * @param graphNodes The set of logical nodes that should be arranged into a dendrogram.
+     * @return DendrogramNode that is the root of the Dendrogram created by clustering
+     */
+    public final DendrogramNode cluster(final Set<Node> graphNodes) {
 
-        //Map to hold the current set of Node clusters in a top-level DendrogramNode. This is an optimization as each DendrogramNode has a function
+        //Map to hold the current set of Node clusters in a top-level DendrogramNode.
+        //This is an optimization as each DendrogramNode has a function
         //to retrieve the set of child nodes.
-        Map<DendrogramNode, Set<Node>> topLevelClusterMap = new HashMap<DendrogramNode, Set<Node>>();
+        Map<DendrogramNode, Set<Node>> topClusterMap = new HashMap<DendrogramNode, Set<Node>>();
         //Map of distances to the pair of DendrogramNodes they separate
         DistanceMapper distanceMap = new DistanceMapper();
 
         Set<DendrogramNode> initialDNodeSet = new HashSet<DendrogramNode>();
         //This loop turns the set of Nodes from the input into a set of singleton DendrogramNodes
-        for (Node collapsibleGraphNode : collapsibleGraphNodes) {
+        for (Node collapsibleGraphNode : graphNodes) {
             //Create the DendrogramLeafNode to hold this Node
             DendrogramNode newDNodeSet = new LeafDendrogramNode(collapsibleGraphNode);
 
             //As these new Dendrograms are top-level, they must have nodes for topLevelClusters
             Set<Node> singletonClusterSet = new HashSet<Node>();
             singletonClusterSet.add(collapsibleGraphNode);
-            topLevelClusterMap.put(newDNodeSet, singletonClusterSet);
+            topClusterMap.put(newDNodeSet, singletonClusterSet);
 
             //A loop to calculate the distance between this DendrogramNode and each singleton DendrogramNode that we've already added
             //In so doing this will make sure we have each of the pairings necessary
@@ -47,7 +47,7 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
                 Set<DendrogramNode> clusterPair = new HashSet<DendrogramNode>();
                 clusterPair.add(dNode);
                 clusterPair.add(newDNodeSet);
-                distanceMap.put(findDistance(newDNodeSet, dNode, topLevelClusterMap), newDNodeSet, dNode);
+                distanceMap.put(findDistance(newDNodeSet, dNode, topClusterMap), newDNodeSet, dNode);
             }
             //We do this last to avoid self-comparisons.
             initialDNodeSet.add(newDNodeSet);
@@ -55,12 +55,13 @@ public class SingleLinkClusteringStrategy implements ClusteringStrategy {
 
         //A loop that runs until the we have only a single pairing left.
         while (distanceMap.size() > 2) {
-            distanceMap.clusterClosestPair(topLevelClusterMap);
+            System.out.println("Distance Map size down to" + distanceMap.size());
+            distanceMap.clusterClosestPair(topClusterMap);
         }
         
-        DendrogramNode rootOfDendrogram = distanceMap.clusterClosestPair(topLevelClusterMap);
-        return rootOfDendrogram;
-    }
+        //Create and return the root of the dendrogram
+        return distanceMap.clusterClosestPair(topClusterMap);
+        }
 
     private Double findDistance(DendrogramNode firstDendrogramNode, DendrogramNode secondDendrogramNode,
             Map<DendrogramNode, Set<Node>> currentClusters) {
