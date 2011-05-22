@@ -23,11 +23,12 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
      * @param graphNodes The set of logical nodes that should be arranged into a dendrogram.
      * @return DendrogramNode that is the root of the Dendrogram created by clustering
      */
-    private final static int NUMBER_OF_THREADS = 4;
+    private final static int NUMBER_OF_THREADS = 3;
+    private final static int INDEXES_PER_THREAD = 3;
 
     public final DendrogramNode cluster(final Set<Node> graphNodes) {
 
-        ExecutorService distanceExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS) ;
+        ExecutorService distanceExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
         //Map to hold the current set of Node clusters in a top-level DendrogramNode.
         //This is an optimization as each DendrogramNode has a function
@@ -56,18 +57,21 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
 
         while (dendrogramNodes.size() > 1) {
             List<Future<MinimumPair>> executorResults = new ArrayList<Future<MinimumPair>>();
-            for (int i = 0; i < dendrogramNodes.size()-1; i++) {
-                executorResults.add(distanceExecutor.submit(new MinimumDistanceTask(i, dendrogramNodes, topClusterMap)));
+            int bottomIndex = 0;
+            while (bottomIndex + INDEXES_PER_THREAD - 1 < dendrogramNodes.size() - 1) {
+                executorResults.add(distanceExecutor.submit(new MinimumDistanceTask(bottomIndex, (bottomIndex + INDEXES_PER_THREAD) - 1, dendrogramNodes, topClusterMap)));
+                bottomIndex = bottomIndex+INDEXES_PER_THREAD;
             }
+            executorResults.add(distanceExecutor.submit(new MinimumDistanceTask(bottomIndex, dendrogramNodes.size() - 1, dendrogramNodes, topClusterMap)));
             double minimumDistance = Double.MAX_VALUE;
             MinimumPair smallestPair = null;
-            for(int i = 0; i < executorResults.size(); i++) {
+            for (int i = 0; i < executorResults.size(); i++) {
                 Future<MinimumPair> pair = executorResults.get(i);
                 try {
-                if(pair.get().getDistance() < minimumDistance) {
-                    minimumDistance = pair.get().getDistance();
-                    smallestPair = pair.get();
-                }
+                    if (pair.get().getDistance() < minimumDistance) {
+                        minimumDistance = pair.get().getDistance();
+                        smallestPair = pair.get();
+                    }
                 } catch (Exception e) {
                     System.out.println("FUCK!");
                     System.exit(1);
@@ -139,12 +143,14 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
 
     protected class MinimumDistanceTask implements Callable<MinimumPair> {
 
-        int indexToCheck;
+        int minIndexToCheck;
+        int maxIndexToCheck;
         List<DendrogramNode> dendrogramNodes;
         List<Set<Node>> topClusterList;
 
-        public MinimumDistanceTask(int indexToCheck, List<DendrogramNode> dendrogramNodes, List<Set<Node>> topClusterList) {
-            this.indexToCheck = indexToCheck;
+        public MinimumDistanceTask(int minIndexToCheck, int maxIndexToCheck, List<DendrogramNode> dendrogramNodes, List<Set<Node>> topClusterList) {
+            this.minIndexToCheck = minIndexToCheck;
+            this.maxIndexToCheck = maxIndexToCheck;
             this.dendrogramNodes = dendrogramNodes;
             this.topClusterList = topClusterList;
         }
@@ -153,14 +159,18 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
             double minimumDistance = Double.MAX_VALUE;
             int index1 = -1;
             int index2 = -1;
-            for (int i = indexToCheck+1; i < dendrogramNodes.size(); i++) {
-                double thisDistance = findDistance(indexToCheck, i, dendrogramNodes, topClusterList);
-                if (thisDistance < minimumDistance) {
-                    minimumDistance = thisDistance;
-                    index1 = indexToCheck;
-                    index2 = i;
+
+            for (int indexToCheck = minIndexToCheck; indexToCheck <= maxIndexToCheck; indexToCheck++) {
+                for (int i = indexToCheck + 1; i < dendrogramNodes.size(); i++) {
+                    double thisDistance = findDistance(indexToCheck, i, dendrogramNodes, topClusterList);
+                    if (thisDistance < minimumDistance) {
+                        minimumDistance = thisDistance;
+                        index1 = indexToCheck;
+                        index2 = i;
+                    }
                 }
             }
+
             return new MinimumPair(minimumDistance, index1, index2);
         }
     }
