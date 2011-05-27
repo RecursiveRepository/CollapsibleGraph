@@ -28,7 +28,8 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
 
     public final DendrogramNode cluster(final Set<Node> graphNodes) {
 
-        ExecutorService distanceExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+      //  ExecutorService distanceExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+        long startTime = System.currentTimeMillis();
 
         //Map to hold the current set of Node clusters in a top-level DendrogramNode.
         //This is an optimization as each DendrogramNode has a function
@@ -39,10 +40,16 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
 
 
         //An ArrayList to hold the actual dendrogram nodes as they're being clustered
-        ArrayList<DendrogramNode> dendrogramNodes = new ArrayList<DendrogramNode>(graphNodes.size());
+        Set<Integer> dendrogramNodeIndices = new HashSet<Integer>(graphNodes.size());
+
+        DendrogramNode[] dendrogramNodes = new DendrogramNode[graphNodes.size()];
+        int[] nearestNeighborIndices = new int[graphNodes.size()];
+        double[] nearestNeighborDistances = new double[graphNodes.size()];
+
 
 
         //This loop turns the set of Nodes from the input into a set of singleton DendrogramNodes
+        int index = 0;
         for (Node collapsibleGraphNode : graphNodes) {
             //Create the DendrogramLeafNode to hold this Node
             DendrogramNode newDNode = new LeafDendrogramNode(collapsibleGraphNode);
@@ -52,57 +59,91 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
             singletonClusterSet.add(collapsibleGraphNode);
             topClusterMap.add(singletonClusterSet);
 
-            dendrogramNodes.add(newDNode);
+            dendrogramNodes[index] = newDNode;
+            dendrogramNodeIndices.add(index);
+            index++;
         }
 
-        while (dendrogramNodes.size() > 1) {
-            List<Future<MinimumPair>> executorResults = new ArrayList<Future<MinimumPair>>();
-            int bottomIndex = 0;
-            while (bottomIndex + INDEXES_PER_THREAD - 1 < dendrogramNodes.size() - 1) {
-                executorResults.add(distanceExecutor.submit(new MinimumDistanceTask(bottomIndex, (bottomIndex + INDEXES_PER_THREAD) - 1, dendrogramNodes, topClusterMap)));
-                bottomIndex = bottomIndex+INDEXES_PER_THREAD;
-            }
-            executorResults.add(distanceExecutor.submit(new MinimumDistanceTask(bottomIndex, dendrogramNodes.size() - 1, dendrogramNodes, topClusterMap)));
-            double minimumDistance = Double.MAX_VALUE;
-            MinimumPair smallestPair = null;
-            for (int i = 0; i < executorResults.size(); i++) {
-                Future<MinimumPair> pair = executorResults.get(i);
-                try {
-                    if (pair.get().getDistance() < minimumDistance) {
-                        minimumDistance = pair.get().getDistance();
-                        smallestPair = pair.get();
-                    }
-                } catch (Exception e) {
-                    System.out.println("FUCK!");
-                    System.exit(1);
+
+        for (int i = 0; i < dendrogramNodes.length; i++) {
+            double minDistance = Double.MAX_VALUE;
+            int minDistanceIndex = -1;
+            for (int j = 0; j < dendrogramNodes.length; j++) {
+                if (i == j) {
+                    continue;
+                }
+                double thisDistance = findDistance(i, j, topClusterMap);
+                if (thisDistance < minDistance) {
+                    minDistance = thisDistance;
+                    minDistanceIndex = j;
                 }
             }
-            int index1 = smallestPair.getIndex1();
-            int index2 = smallestPair.getIndex2();
+            nearestNeighborDistances[i] = minDistance;
+            nearestNeighborIndices[i] = minDistanceIndex;
+            if(i%50 == 0 ) System.out.println(i + " done.");
+        }
+
+        int newlyAssignedIndex = -1;
+        while (dendrogramNodeIndices.size() > 1) {
+            double minDistance = Double.MAX_VALUE;
+            int minDistanceIndex = -1;
+            for (int dendrogramNodeIndex : dendrogramNodeIndices) {
+                if (nearestNeighborDistances[dendrogramNodeIndex] < minDistance) {
+                    minDistance = nearestNeighborDistances[dendrogramNodeIndex];
+                    minDistanceIndex = dendrogramNodeIndex;
+                }
+            }
+
+
+            int index1 = minDistanceIndex;
+            int index2 = nearestNeighborIndices[minDistanceIndex];
+
             Set<DendrogramNode> newPair = new HashSet<DendrogramNode>();
 
             Set<Node> innerNodes = topClusterMap.get(index1);
             innerNodes.addAll(topClusterMap.get(index2));
 
             //Safe to do because index2 > index1 
-            topClusterMap.remove(index2);
-            newPair.add(dendrogramNodes.get(index1));
 
-            newPair.add(dendrogramNodes.get(index2));
-            DendrogramNode newCluster = new ClusterDendrogramNode(newPair, minimumDistance);
+            newPair.add(dendrogramNodes[index1]);
+
+            newPair.add(dendrogramNodes[index2]);
+            DendrogramNode newCluster = new ClusterDendrogramNode(newPair, nearestNeighborDistances[index1]);
             topClusterMap.set(index1, innerNodes);
-            dendrogramNodes.set(index1, newCluster);
+            dendrogramNodes[index1] = newCluster;
+            
+            dendrogramNodeIndices.remove(index2);
+            newlyAssignedIndex = index1;
+
+           
+            for (Integer dendrogramNodeIndex : dendrogramNodeIndices) {
+                if (nearestNeighborIndices[dendrogramNodeIndex.intValue()] == index1 || nearestNeighborIndices[dendrogramNodeIndex.intValue()] == index2) {
+                    double newMinDistance = Double.MAX_VALUE;
+                    int newMinDistanceIndex = -1;
+                    for (Integer neighborDendrogramNodeIndex : dendrogramNodeIndices) {
+                        if(neighborDendrogramNodeIndex.equals(dendrogramNodeIndex)) continue;
+                        double thisDistance = findDistance(dendrogramNodeIndex, neighborDendrogramNodeIndex, topClusterMap);
+                        if (thisDistance < newMinDistance) {
+                            newMinDistance = thisDistance;
+                            newMinDistanceIndex = neighborDendrogramNodeIndex;
+                        }
+                    }
+                    nearestNeighborDistances[dendrogramNodeIndex] = newMinDistance;
+                    nearestNeighborIndices[dendrogramNodeIndex] = newMinDistanceIndex;
+                }
 
 
-            dendrogramNodes.remove(index2);
-            System.out.println("Removed 1 DNode, " + dendrogramNodes.size() + " remaining.");
+            }
+            long nowTime = System.currentTimeMillis();
+            long elapsedTime = nowTime - startTime;
+            System.out.println("Removed 1 DNode, " + dendrogramNodeIndices.size() + " remaining in " + (elapsedTime / 1000));
         }
 
-        return dendrogramNodes.get(0);
+        return dendrogramNodes[newlyAssignedIndex];
     }
 
     private double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
-            List<DendrogramNode> dendrogramNodes, List<Set<Node>> currentClusters) {
+            List<Set<Node>> currentClusters) {
 
         double minimumDistance = Double.MAX_VALUE;
         for (Node currentFirstDendrogramNode : currentClusters.get(firstDendrogramNodeIndex)) {
@@ -162,7 +203,7 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
 
             for (int indexToCheck = minIndexToCheck; indexToCheck <= maxIndexToCheck; indexToCheck++) {
                 for (int i = indexToCheck + 1; i < dendrogramNodes.size(); i++) {
-                    double thisDistance = findDistance(indexToCheck, i, dendrogramNodes, topClusterList);
+                    double thisDistance = findDistance(indexToCheck, i, topClusterList);
                     if (thisDistance < minimumDistance) {
                         minimumDistance = thisDistance;
                         index1 = indexToCheck;
