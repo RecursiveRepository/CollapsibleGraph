@@ -6,7 +6,7 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.ClusteringStrategy;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.NaiveSingleLinkClusteringStrategy;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.SingleLinkClusteringStrategy;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
 import java.util.HashSet;
@@ -59,7 +59,7 @@ public class Main {
         for (int i = 0; i < NUMBER_OF_NODES; i++) {
             inputNodes.add(new IntNode(generator.nextInt(Integer.MAX_VALUE)));
         }
-        ClusteringStrategy singleLinkStrategy = new NaiveSingleLinkClusteringStrategy();
+        ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
         Set<DendrogramNode> clusters = root.partitionByDistance(5.0);
         System.out.println("All done.");

@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
  *
  * @author Jeremy Freeman jeremy@jgfreeman.com
  */
-public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
+public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
     /**
      * @param graphNodes The set of logical nodes that should be arranged into a dendrogram.
@@ -142,20 +142,9 @@ public class NaiveSingleLinkClusteringStrategy implements ClusteringStrategy {
         return dendrogramNodes[newlyAssignedIndex];
     }
 
-    private double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
-            List<Set<Node>> currentClusters) {
-
-        double minimumDistance = Double.MAX_VALUE;
-        for (Node currentFirstDendrogramNode : currentClusters.get(firstDendrogramNodeIndex)) {
-            for (Node currentSecondDendrogramNode : currentClusters.get(secondDendrogramNodeIndex)) {
-                double thisDistance = currentFirstDendrogramNode.getDistance(currentSecondDendrogramNode);
-                if (thisDistance < minimumDistance) {
-                    minimumDistance = thisDistance;
-                }
-            }
-        }
-        return minimumDistance;
-    }
+    //Override this to set a clustering strategy type!
+    protected abstract double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
+            List<Set<Node>> currentClusters);
 
     public static class MinimumPair {
 
