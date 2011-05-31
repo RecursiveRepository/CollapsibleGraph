@@ -9,26 +9,26 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A clustering strategy using Single-Link clustering, which means that the distance
- * between two clusters is defined as the shortest distance between any node in one cluster
- * to any node in the other cluster.
+ * A ClusteringStrategy using the Complete Link method of clustering,
+ * wherein the distance between two clusters is defined as the maximum distance
+ * between any node in one cluster and any node in the other.
  * @author jeremy
  */
-public class SingleLinkClusteringStrategy extends AbstractClusteringStrategy {
+public class CompleteLinkClusteringStrategy extends AbstractClusteringStrategy {
     
        @Override    
         protected double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
             List<Set<Node>> currentClusters) {
 
-        double minimumDistance = Double.MAX_VALUE;
+        double maximumDistance = Double.MIN_VALUE;
         for (Node currentFirstDendrogramNode : currentClusters.get(firstDendrogramNodeIndex)) {
             for (Node currentSecondDendrogramNode : currentClusters.get(secondDendrogramNodeIndex)) {
                 double thisDistance = currentFirstDendrogramNode.getDistance(currentSecondDendrogramNode);
-                if (thisDistance < minimumDistance) {
-                    minimumDistance = thisDistance;
+                if (thisDistance > maximumDistance) {
+                    maximumDistance = thisDistance;
                 }
             }
         }
-        return minimumDistance;
+        return maximumDistance;
     }
 }
