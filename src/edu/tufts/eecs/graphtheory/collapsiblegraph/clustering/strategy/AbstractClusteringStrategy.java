@@ -15,35 +15,44 @@ import java.util.concurrent.Future;
 
 /**
  *
+ * An abstract class representing strategies for clustering Nodes into a DendrogramNode. 
+ * To define a clustering strategy, you must override findDistance.
  * @author Jeremy Freeman jeremy@jgfreeman.com
+ * @version 1.0
  */
 public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
-    /**
-     * @param graphNodes The set of logical nodes that should be arranged into a dendrogram.
-     * @return DendrogramNode that is the root of the Dendrogram created by clustering
-     */
+
     private final static int NUMBER_OF_THREADS = 3;
     private final static int INDEXES_PER_THREAD = 3;
 
+    /** cluster is the function that turns as set of Nodes from some meaningful graph into a Dendrogram
+     * containing those nodes. This is done as pre-processing, so that the clusters at any threshold for a distance function
+     * may be viewed quickly.
+     * @param graphNodes The set of logical nodes that should be arranged into a dendrogram.
+     * @return DendrogramNode that is the root of the Dendrogram created by clustering
+     */
     public final DendrogramNode cluster(final Set<Node> graphNodes) {
 
       //  ExecutorService distanceExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
         long startTime = System.currentTimeMillis();
 
-        //Map to hold the current set of Node clusters in a top-level DendrogramNode.
-        //This is an optimization as each DendrogramNode has a function
-        //to retrieve the set of child nodes.
-        List<Set<Node>> topClusterMap = new ArrayList<Set<Node>>(graphNodes.size());
-
-        //The number of different pairwise distances in the system.
 
 
-        //An ArrayList to hold the actual dendrogram nodes as they're being clustered
+        //A Set of Integers corresponding to the indices that still hold valid DendrogramNodes in 
+        //the array of dendrogramNodes. This shrinks by 1 each time 2 DendrogramNodes are clustered together
         Set<Integer> dendrogramNodeIndices = new HashSet<Integer>(graphNodes.size());
 
+        //The actual array of DendrogramNodes
         DendrogramNode[] dendrogramNodes = new DendrogramNode[graphNodes.size()];
+
+        //List holding the "topmost" clusters as an optimization. *Co-indexed with dendrogramNodes.*
+        //By maintaining a list of Sets of Nodes corresponding to the array of dendrogramNodes, we are able to 
+        //instantly retrieve the set of nodes that is contained in the tree that a given dendrogramNode is the root of, inclusive. 
+        List<Set<Node>> topClusterList = new ArrayList<Set<Node>>(graphNodes.size());
+        //Array holding the index of each dendrogramNode's nearest Neighbor. *Co-indexed with dendrogramNodes*
         int[] nearestNeighborIndices = new int[graphNodes.size()];
+        //Array holding the distance to each dendrogramNode's nearest Neighbor. *Co-indexed with dendrogramNodes*
         double[] nearestNeighborDistances = new double[graphNodes.size()];
 
 
@@ -57,7 +66,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             //As these new Dendrograms are top-level, they must have nodes for topLevelClusters
             Set<Node> singletonClusterSet = new HashSet<Node>();
             singletonClusterSet.add(collapsibleGraphNode);
-            topClusterMap.add(singletonClusterSet);
+            topClusterList.add(singletonClusterSet);
 
             dendrogramNodes[index] = newDNode;
             dendrogramNodeIndices.add(index);
@@ -65,6 +74,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         }
 
 
+        //Calculate the distance between each dendrogramNode and each oter.
         for (int i = 0; i < dendrogramNodes.length; i++) {
             double minDistance = Double.MAX_VALUE;
             int minDistanceIndex = -1;
@@ -72,7 +82,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
                 if (i == j) {
                     continue;
                 }
-                double thisDistance = findDistance(i, j, topClusterMap);
+                double thisDistance = findDistance(i, j, topClusterList);
                 if (thisDistance < minDistance) {
                     minDistance = thisDistance;
                     minDistanceIndex = j;
@@ -83,6 +93,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             if(i%50 == 0 ) System.out.println(i + " done.");
         }
 
+        //A loop that clusters the closest pair of DendrogramNodes repeatedly until there's only 1 left.
         int newlyAssignedIndex = -1;
         while (dendrogramNodeIndices.size() > 1) {
             double minDistance = Double.MAX_VALUE;
@@ -94,35 +105,35 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
                 }
             }
 
-
+            //Collect the indices of the closest pair
             int index1 = minDistanceIndex;
             int index2 = nearestNeighborIndices[minDistanceIndex];
 
+            //Make a new DendrogramNode to cluster this closest pair together
             Set<DendrogramNode> newPair = new HashSet<DendrogramNode>();
-
-            Set<Node> innerNodes = topClusterMap.get(index1);
-            innerNodes.addAll(topClusterMap.get(index2));
-
-            //Safe to do because index2 > index1 
-
             newPair.add(dendrogramNodes[index1]);
-
             newPair.add(dendrogramNodes[index2]);
             DendrogramNode newCluster = new ClusterDendrogramNode(newPair, nearestNeighborDistances[index1]);
-            topClusterMap.set(index1, innerNodes);
+            
+            //Combine the two sets of Nodes to update the topClusterList
+            Set<Node> innerNodes = topClusterList.get(index1);
+            innerNodes.addAll(topClusterList.get(index2));
+            topClusterList.set(index1, innerNodes);
             dendrogramNodes[index1] = newCluster;
             
+            //Remove the no-longer-used dendrogram index from the list of indices
             dendrogramNodeIndices.remove(index2);
             newlyAssignedIndex = index1;
 
-           
+           //A loop to go through all of the dendrogramNodes to see whose nearestNeighbor was altered 
+           //by the clustering and updating their distance accordingly. 
             for (Integer dendrogramNodeIndex : dendrogramNodeIndices) {
                 if (nearestNeighborIndices[dendrogramNodeIndex.intValue()] == index1 || nearestNeighborIndices[dendrogramNodeIndex.intValue()] == index2) {
                     double newMinDistance = Double.MAX_VALUE;
                     int newMinDistanceIndex = -1;
                     for (Integer neighborDendrogramNodeIndex : dendrogramNodeIndices) {
                         if(neighborDendrogramNodeIndex.equals(dendrogramNodeIndex)) continue;
-                        double thisDistance = findDistance(dendrogramNodeIndex, neighborDendrogramNodeIndex, topClusterMap);
+                        double thisDistance = findDistance(dendrogramNodeIndex, neighborDendrogramNodeIndex, topClusterList);
                         if (thisDistance < newMinDistance) {
                             newMinDistance = thisDistance;
                             newMinDistanceIndex = neighborDendrogramNodeIndex;
@@ -131,9 +142,8 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
                     nearestNeighborDistances[dendrogramNodeIndex] = newMinDistance;
                     nearestNeighborIndices[dendrogramNodeIndex] = newMinDistanceIndex;
                 }
-
-
             }
+            
             long nowTime = System.currentTimeMillis();
             long elapsedTime = nowTime - startTime;
             System.out.println("Removed 1 DNode, " + dendrogramNodeIndices.size() + " remaining in " + (elapsedTime / 1000));
@@ -142,7 +152,16 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         return dendrogramNodes[newlyAssignedIndex];
     }
 
-    //Override this to set a clustering strategy type!
+    /*
+     * This function should be overridden with your own distance measuring strategy. 
+     * You are passed the 2 indices into currentClusters that hold the sets of nodes that represent the clusters.
+     * For example, in a Single Link strategy, you would want to find the shortest distance between
+     * any node in the first set to any node in the second set.
+     * @param firstDendrogramNodeIndex the index into currentClusters that holds the first cluster to be compared
+     * @param secondDendrogramNodeIndex the index into currentClusters that holds the second cluster to be compared
+     * @param currentClusters the List of all clusters, each index holds a Set<Node> that holds all the Nodes in a given cluster
+     * @return a double representing the distance between the two clusters
+     */
     protected abstract double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
             List<Set<Node>> currentClusters);
 

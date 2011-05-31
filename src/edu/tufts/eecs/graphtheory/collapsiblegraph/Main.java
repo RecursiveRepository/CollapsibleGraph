@@ -63,7 +63,5 @@ public class Main {
         DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
         Set<DendrogramNode> clusters = root.partitionByDistance(5.0);
         System.out.println("All done.");
-        //This is a small test change.
-       
-    }
+        }
 }
