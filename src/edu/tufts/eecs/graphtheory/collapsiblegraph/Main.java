@@ -61,7 +61,19 @@ public class Main {
         }
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
-        Set<DendrogramNode> clusters = root.partitionByDistance(5.0);
+        long startTime = System.currentTimeMillis();
+        Set<DendrogramNode> clusters = root.partitionByDistance(1.0);
+        long endTime = System.currentTimeMillis(); 
+        System.out.println("Cut to 1 partition in " + (endTime - startTime) + "milliseconds");
+        
+        for(int i = 1; i < 10000000; i= i * 10) {
+        
+        startTime = System.currentTimeMillis();
+        clusters = root.partitionByDistance(i);
+        endTime = System.currentTimeMillis();
+        System.out.println("Cut to " + i + " partition in " + (endTime - startTime) + "milliseconds");
+        }
+                
         System.out.println("All done.");
         }
 }
