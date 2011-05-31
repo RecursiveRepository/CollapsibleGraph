@@ -216,9 +216,6 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
         public MinimumDistanceTask(int minIndexToCheck, int maxIndexToCheck, DendrogramNode[] dendrogramNodes, List<Set<Node>> topClusterList,
                 Set<Integer> indicesToCheck) {
-            if(minIndexToCheck < 0 ) {
-                System.out.println("WTF MATE");
-            }
             this.minIndexToCheck = minIndexToCheck;
             this.maxIndexToCheck = maxIndexToCheck;
             this.dendrogramNodes = dendrogramNodes;
@@ -232,12 +229,6 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
             for (int indexToCheck = minIndexToCheck; indexToCheck <= maxIndexToCheck; indexToCheck++) {
                 for (Integer thisIndex : indicesToCheck) {
-                    if(thisIndex<0) {
-                        System.err.println("Alarm! Alarm!");
-                    }
-                    if(indexToCheck<0) {
-                        System.err.println("Alert! Alert");
-                    }
                     if (thisIndex.intValue() == indexToCheck) {
                         continue;
                     }
