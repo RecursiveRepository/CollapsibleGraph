@@ -22,7 +22,7 @@ import java.util.concurrent.Future;
  */
 public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
-    private final static int NUMBER_OF_THREADS = 8;
+    private final static int NUMBER_OF_THREADS = 6;
     private final static int INDEXES_PER_THREAD = 3;
 
     /** cluster is the function that turns as set of Nodes from some meaningful graph into a Dendrogram
@@ -46,9 +46,9 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         DendrogramNode[] dendrogramNodes = new DendrogramNode[graphNodes.size()];
 
         //List holding the "topmost" clusters as an optimization. *Co-indexed with dendrogramNodes.*
-        //By maintaining a list of Sets of Nodes corresponding to the array of dendrogramNodes, we are able to 
+        //By maintaining a List of Arrays of Nodes corresponding to the array of dendrogramNodes, we are able to 
         //instantly retrieve the set of nodes that is contained in the tree that a given dendrogramNode is the root of, inclusive. 
-        List<Set<Node>> topClusterList = new ArrayList<Set<Node>>(graphNodes.size());
+        List<Node[]> topClusterList = new ArrayList<Node[]>(graphNodes.size());
         //Array holding the index of each dendrogramNode's nearest Neighbor. *Co-indexed with dendrogramNodes*
         int[] nearestNeighborIndices = new int[graphNodes.size()];
         //Array holding the distance to each dendrogramNode's nearest Neighbor. *Co-indexed with dendrogramNodes*
@@ -63,8 +63,8 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             DendrogramNode newDNode = new LeafDendrogramNode(collapsibleGraphNode);
 
             //As these new Dendrograms are top-level, they must have nodes for topLevelClusters
-            Set<Node> singletonClusterSet = new HashSet<Node>();
-            singletonClusterSet.add(collapsibleGraphNode);
+            Node[] singletonClusterSet = new Node[1];
+            singletonClusterSet[0] = collapsibleGraphNode;
             topClusterList.add(singletonClusterSet);
 
             dendrogramNodes[index] = newDNode;
@@ -118,13 +118,16 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             newPair.add(dendrogramNodes[index1]);
             newPair.add(dendrogramNodes[index2]);
             DendrogramNode newCluster = new ClusterDendrogramNode(newPair, nearestNeighborDistances[index1]);
-
-            //Combine the two sets of Nodes to update the topClusterList
-            Set<Node> innerNodes = topClusterList.get(index1);
-            innerNodes.addAll(topClusterList.get(index2));
-            topClusterList.set(index1, innerNodes);
             dendrogramNodes[index1] = newCluster;
 
+            //Combine the two sets of Nodes to update the topClusterList
+            Node[] newArray = new Node[topClusterList.get(index1).length + topClusterList.get(index2).length];
+            System.arraycopy(topClusterList.get(index1), 0, newArray, 0, topClusterList.get(index1).length);
+            System.arraycopy(topClusterList.get(index2), 0, newArray, topClusterList.get(index1).length, topClusterList.get(index2).length);
+            topClusterList.set(index1, newArray);
+            
+            
+            
             //Remove the no-longer-used dendrogram index from the list of indices
             dendrogramNodeIndices.remove(index2);
             newlyAssignedIndex = index1;
@@ -174,7 +177,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
      * @return a double representing the distance between the two clusters
      */
     protected abstract double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
-            List<Set<Node>> currentClusters);
+            List<Node[]> currentClusters);
 
     /*
      * An inner class to hold the results of a closest-neighbor search
@@ -211,10 +214,10 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         int minIndexToCheck;
         int maxIndexToCheck;
         DendrogramNode[] dendrogramNodes;
-        List<Set<Node>> topClusterList;
+        List<Node[]> topClusterList;
         Set<Integer> indicesToCheck;
 
-        public MinimumDistanceTask(int minIndexToCheck, int maxIndexToCheck, DendrogramNode[] dendrogramNodes, List<Set<Node>> topClusterList,
+        public MinimumDistanceTask(int minIndexToCheck, int maxIndexToCheck, DendrogramNode[] dendrogramNodes, List<Node[]> topClusterList,
                 Set<Integer> indicesToCheck) {
             this.minIndexToCheck = minIndexToCheck;
             this.maxIndexToCheck = maxIndexToCheck;
