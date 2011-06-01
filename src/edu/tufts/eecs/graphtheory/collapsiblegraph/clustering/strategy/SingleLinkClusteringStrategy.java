@@ -16,14 +16,19 @@ import java.util.Set;
  */
 public class SingleLinkClusteringStrategy extends AbstractClusteringStrategy {
     
+    private final static Node[] nodeArray = new Node[0];
        @Override    
         protected double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
             List<Set<Node>> currentClusters) {
 
+        
         double minimumDistance = Double.MAX_VALUE;
-        for (Node currentFirstDendrogramNode : currentClusters.get(firstDendrogramNodeIndex)) {
-            for (Node currentSecondDendrogramNode : currentClusters.get(secondDendrogramNodeIndex)) {
-                double thisDistance = currentFirstDendrogramNode.getDistance(currentSecondDendrogramNode);
+        Node[] firstDendrogramNodes = currentClusters.get(firstDendrogramNodeIndex).toArray(nodeArray);
+        Node[] secondDendrogramNodes = currentClusters.get(secondDendrogramNodeIndex).toArray(nodeArray);
+        for (int i = 0; i < firstDendrogramNodes.length; i++) {
+             
+            for (int j = 0; j < secondDendrogramNodes.length; j++) {
+                double thisDistance = firstDendrogramNodes[i].getDistance(secondDendrogramNodes[j]);
                 if (thisDistance < minimumDistance) {
                     minimumDistance = thisDistance;
                 }
