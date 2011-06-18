@@ -18,7 +18,7 @@ public class CompleteLinkClusteringStrategy extends AbstractClusteringStrategy {
     
        @Override    
         protected double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
-            List<Set<Node>> currentClusters) {
+            List<Node[]> currentClusters) {
 
         double maximumDistance = Double.MIN_VALUE;
         for (Node currentFirstDendrogramNode : currentClusters.get(firstDendrogramNodeIndex)) {
