@@ -18,7 +18,7 @@ public class AverageLinkClusteringStrategy extends AbstractClusteringStrategy {
 
     @Override
     protected double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
-            List<Set<Node>> currentClusters) {
+            List<Node[]> currentClusters) {
 
         double sum = 0.0;
         int comparisons = 0;
