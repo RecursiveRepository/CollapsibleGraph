@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.tufts.eecs.graphtheory.collapsiblegraph;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
@@ -9,6 +5,8 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.Clusterin
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.SingleLinkClusteringStrategy;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -64,12 +62,13 @@ public class Main {
         long startTime = System.currentTimeMillis();
         Set<DendrogramNode> clusters = root.partitionByDistance(1.0);
         long endTime = System.currentTimeMillis(); 
+        DendrogramSlicer ds = new DendrogramSlicerImpl();
         System.out.println("Cut to 1 partition in " + (endTime - startTime) + "milliseconds");
         
         for(int i = 1; i < 10000000; i= i * 10) {
         
         startTime = System.currentTimeMillis();
-        clusters = root.partitionByDistance(i);
+        ds.partitionByDistance(i, root, null);
         endTime = System.currentTimeMillis();
         System.out.println("Cut to " + i + " partition in " + (endTime - startTime) + "milliseconds");
         }

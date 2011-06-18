@@ -43,7 +43,15 @@ public class ClusterDendrogramNode implements DendrogramNode{
         }
         return nodeSet;
     }
-
+    
+    public double getDistance() {
+        return distance;
+    }
+    
+    public Set<DendrogramNode> getChildNodes() {
+        return childNodes;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

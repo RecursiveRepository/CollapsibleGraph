@@ -7,6 +7,9 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
@@ -27,7 +30,8 @@ public class SimpleIntNodeClusterTest {
         }
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
-        Set<DendrogramNode> clusters = root.partitionByDistance(5.0);
+        DendrogramSlicer ds = new DendrogramSlicerImpl();
+        DendrogramSlice results = ds.partitionByDistance(5.0, root,null);
         System.out.println("All done.");
     }
 }
