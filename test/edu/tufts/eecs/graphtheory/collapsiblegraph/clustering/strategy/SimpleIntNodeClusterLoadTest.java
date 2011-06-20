@@ -25,9 +25,9 @@ public class SimpleIntNodeClusterLoadTest {
         for (int i = 0; i < NUMBER_OF_NODES; i++) {
             inputNodes.add(new IntNode(generator.nextInt(Integer.MAX_VALUE)));
         }
-        ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
-        DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
-        Set<DendrogramNode> clusters = root.partitionByDistance(5.0);
+   //     ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
+     //   DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
+     //   Set<DendrogramNode> clusters = root.partitionByDistance(5.0);
         System.out.println("All done.");
     }
 }

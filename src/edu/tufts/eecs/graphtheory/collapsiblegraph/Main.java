@@ -1,5 +1,6 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph;
 
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.ClusteringStrategy;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.SingleLinkClusteringStrategy;
@@ -58,7 +59,9 @@ public class Main {
             inputNodes.add(new IntNode(generator.nextInt(Integer.MAX_VALUE)));
         }
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
-        DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
+        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, null);
+        DendrogramNode root = dendrogram.getRootNode();
+        
         long startTime = System.currentTimeMillis();
         Set<DendrogramNode> clusters = root.partitionByDistance(1.0);
         long endTime = System.currentTimeMillis(); 
@@ -68,7 +71,7 @@ public class Main {
         for(int i = 1; i < 10000000; i= i * 10) {
         
         startTime = System.currentTimeMillis();
-        ds.partitionByDistance(i, root, null);
+        ds.partitionByDistance(i, dendrogram);
         endTime = System.currentTimeMillis();
         System.out.println("Cut to " + i + " partition in " + (endTime - startTime) + "milliseconds");
         }

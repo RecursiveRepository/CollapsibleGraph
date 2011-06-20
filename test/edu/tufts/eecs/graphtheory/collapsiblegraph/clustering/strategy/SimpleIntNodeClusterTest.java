@@ -4,13 +4,17 @@
  */
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.SkeletonEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 
@@ -25,13 +29,21 @@ public class SimpleIntNodeClusterTest {
     @Test
     public void testCluster() {
         Set<Node> inputNodes = new HashSet<Node>();
+        List<Node> inputNodeList = new ArrayList<Node>();
+        
         for (int i = 0; i < inputIntegers.length; i++) {
-            inputNodes.add(new IntNode(inputIntegers[i]));
+            Node newNode = new IntNode(inputIntegers[i]);
+            inputNodes.add(newNode);
+            inputNodeList.add(newNode);
         }
+        
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
-        DendrogramNode root = singleLinkStrategy.cluster(inputNodes);
+        Set<Edge> dendrogramEdges = new HashSet<Edge>();
+        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(3)));
+        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(1)));
+        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicerImpl();
-        DendrogramSlice results = ds.partitionByDistance(5.0, root,null);
+        DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
         System.out.println("All done.");
     }
 }
