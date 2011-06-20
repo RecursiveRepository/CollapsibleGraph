@@ -34,7 +34,7 @@ public class SkeletonEdge implements Edge {
     }
 
     public Node getSource() {
-        return targetNode;
+        return sourceNode;
     }
 
     public Node getTarget() {
