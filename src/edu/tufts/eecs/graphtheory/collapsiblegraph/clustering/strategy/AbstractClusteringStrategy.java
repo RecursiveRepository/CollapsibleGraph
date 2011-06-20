@@ -1,12 +1,18 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdgeImpl;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.LeafDendrogramNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +28,7 @@ import java.util.concurrent.Future;
  */
 public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
-    private final static int NUMBER_OF_THREADS = 6;
+    private final static int NUMBER_OF_THREADS = 3;
     private final static int INDEXES_PER_THREAD = 3;
 
     /** cluster is the function that turns as set of Nodes from some meaningful graph into a Dendrogram
@@ -31,7 +37,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
      * @param graphNodes The set of logical nodes that should be arranged into a dendrogram.
      * @return DendrogramNode that is the root of the Dendrogram created by clustering
      */
-    public final DendrogramNode cluster(final Set<Node> graphNodes) {
+    public final Dendrogram cluster(final Set<Node> graphNodes, final Set<Edge> graphEdges ) {
 
         ExecutorService distanceExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
         long startTime = System.currentTimeMillis();
@@ -55,13 +61,15 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         double[] nearestNeighborDistances = new double[graphNodes.size()];
 
 
+        Map<Node, DendrogramNode> nodeToDendrogramNodeMap = new HashMap<Node, DendrogramNode>();
 
         //This loop turns the set of Nodes from the input into a set of singleton DendrogramNodes
         int index = 0;
         for (Node collapsibleGraphNode : graphNodes) {
             //Create the DendrogramLeafNode to hold this Node
             DendrogramNode newDNode = new LeafDendrogramNode(collapsibleGraphNode);
-
+            
+            nodeToDendrogramNodeMap.put(collapsibleGraphNode, newDNode); 
             //As these new Dendrograms are top-level, they must have nodes for topLevelClusters
             Node[] singletonClusterSet = new Node[1];
             singletonClusterSet[0] = collapsibleGraphNode;
@@ -72,7 +80,13 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             index++;
         }
 
-
+        DendrogramEdge[] dEdges = new DendrogramEdge[graphEdges.size()];
+        int edgeIndex = 0;
+        for(Edge graphEdge : graphEdges) {
+            dEdges[edgeIndex]=new DendrogramEdgeImpl(nodeToDendrogramNodeMap.get(graphEdge.getSource()), nodeToDendrogramNodeMap.get(graphEdge.getTarget()));
+            edgeIndex++;
+        }
+        
         List<Future<NearestNeighbor>> nearestNeighbors = new ArrayList<Future<NearestNeighbor>>(dendrogramNodes.length);
         //Calculate the distance between each dendrogramNode and each other.
         for (int i = 0; i < dendrogramNodes.length; i++) {
@@ -163,7 +177,9 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
                     "Removed 1 DNode, " + dendrogramNodeIndices.size() + " remaining in " + (elapsedTime / 1000));
         }
         distanceExecutor.shutdown();
-        return dendrogramNodes[newlyAssignedIndex];
+        Dendrogram finalDendrogram = new Dendrogram(dendrogramNodes[newlyAssignedIndex], null);
+        finalDendrogram.setDendrogramEdges(dEdges);
+        return finalDendrogram;
     }
 
     /*
