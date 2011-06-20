@@ -4,11 +4,15 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.ClusteringStrategy;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.SingleLinkClusteringStrategy;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.SkeletonEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -54,12 +58,26 @@ public class Main {
     
     
     public static void main(String[] argv) {
+        
+        List<Node> inputNodesList = new ArrayList<Node>();
         Set<Node> inputNodes = new HashSet<Node>();
         for (int i = 0; i < NUMBER_OF_NODES; i++) {
-            inputNodes.add(new IntNode(generator.nextInt(Integer.MAX_VALUE)));
+            Node newNode = new IntNode(generator.nextInt(Integer.MAX_VALUE));
+            inputNodes.add(newNode);
+            inputNodesList.add(newNode);
         }
+        
+        
+        Set<Edge> inputEdges = new HashSet<Edge>();
+        for(int i = 0; i < NUMBER_OF_NODES; i++) {
+                inputEdges.add(new SkeletonEdge(inputNodesList.get(generator.nextInt(NUMBER_OF_NODES-1)),
+                        inputNodesList.get(generator.nextInt(NUMBER_OF_NODES-1))));
+        }
+        
+        System.out.println("Edges: " + inputEdges.size());
+       
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
-        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, null);
+        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, inputEdges);
         DendrogramNode root = dendrogram.getRootNode();
         
         long startTime = System.currentTimeMillis();
