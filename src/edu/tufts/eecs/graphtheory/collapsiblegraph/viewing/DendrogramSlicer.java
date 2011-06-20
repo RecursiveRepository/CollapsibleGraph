@@ -4,8 +4,7 @@
  */
 package edu.tufts.eecs.graphtheory.collapsiblegraph.viewing;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
 
 /**
  *
@@ -13,6 +12,6 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
  */
 public interface DendrogramSlicer {
     
-        public DendrogramSlice partitionByDistance(double distance, DendrogramNode rootNode, DendrogramEdge[] edges);
+        public DendrogramSlice partitionByDistance(double distance, Dendrogram dendrogram);
 
 }

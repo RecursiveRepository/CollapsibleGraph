@@ -5,6 +5,7 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.viewing;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdgeImpl;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
@@ -22,7 +23,10 @@ import java.util.Set;
  */
 public class DendrogramSlicerImpl implements DendrogramSlicer {
 
-    public DendrogramSlice partitionByDistance(double distance, DendrogramNode rootNode, DendrogramEdge[] edges) {
+    public DendrogramSlice partitionByDistance(double distance, Dendrogram dendrogram) {
+        DendrogramNode rootNode = dendrogram.getRootNode();
+        DendrogramEdge[] dEdges = dendrogram.getDendrogramEdges();
+        
         List<DendrogramNode> dendrogramNodes = new ArrayList<DendrogramNode>();
         Set<DendrogramEdge> dendrogramEdges = new HashSet<DendrogramEdge>();
         Map<DendrogramNode, DendrogramNode> dNodeToParentDNode = new HashMap<DendrogramNode, DendrogramNode>();
@@ -58,7 +62,7 @@ public class DendrogramSlicerImpl implements DendrogramSlicer {
             }
         }
         
-        for(DendrogramEdge edge : dendrogramEdges) {
+        for(DendrogramEdge edge : dEdges) {
             dendrogramEdges.add(new DendrogramEdgeImpl(dNodeToParentDNode.get(edge.getSourceDendrogramNode()),
                                                        dNodeToParentDNode.get(edge.getTargetDendrogramNode())));
         }
