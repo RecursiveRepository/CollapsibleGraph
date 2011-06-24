@@ -51,6 +51,12 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         //The actual array of DendrogramNodes
         DendrogramNode[] dendrogramNodes = new DendrogramNode[graphNodes.size()];
 
+        Set<Integer> dendrogramEdgeIndices = new HashSet<Integer>(graphEdges.size());
+        
+        DendrogramEdge[] dendrogramEdges = new DendrogramEdge[graphEdges.size()];
+        
+        Map<DendrogramNode, List <DendrogramEdge>> dNodeToOutgoingEdges = new HashMap<DendrogramNode, List<DendrogramEdge>>();
+        Map<DendrogramNode, List <DendrogramEdge>> dNodeToIncomingEdges = new HashMap<DendrogramNode, List<DendrogramEdge>>();
         //List holding the "topmost" clusters as an optimization. *Co-indexed with dendrogramNodes.*
         //By maintaining a List of Arrays of Nodes corresponding to the array of dendrogramNodes, we are able to 
         //instantly retrieve the set of nodes that is contained in the tree that a given dendrogramNode is the root of, inclusive. 
@@ -83,7 +89,18 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         DendrogramEdge[] dEdges = new DendrogramEdge[graphEdges.size()];
         int edgeIndex = 0;
         for(Edge graphEdge : graphEdges) {
-            dEdges[edgeIndex]=new DendrogramEdgeImpl(nodeToDendrogramNodeMap.get(graphEdge.getSource()), nodeToDendrogramNodeMap.get(graphEdge.getTarget()));
+            DendrogramNode sourceDNode = nodeToDendrogramNodeMap.get(graphEdge.getSource());
+            DendrogramNode targetDNode = nodeToDendrogramNodeMap.get(graphEdge.getTarget());
+            DendrogramEdge newEdge = new DendrogramEdgeImpl(sourceDNode, targetDNode);
+            dEdges[edgeIndex]= newEdge;
+            
+            List<DendrogramEdge> sourceList = new ArrayList<DendrogramEdge>();
+            sourceList.add(newEdge);
+            dNodeToOutgoingEdges.put(sourceDNode, sourceList);
+            
+            List<DendrogramEdge> targetList = new ArrayList<DendrogramEdge>();
+            targetList.add(newEdge);
+            dNodeToOutgoingEdges.put(targetDNode, targetList);
             edgeIndex++;
         }
         
