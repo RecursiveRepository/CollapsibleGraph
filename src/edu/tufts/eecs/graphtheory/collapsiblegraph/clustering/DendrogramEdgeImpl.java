@@ -13,7 +13,7 @@ public class DendrogramEdgeImpl implements DendrogramEdge {
     DendrogramNode sourceNode;
     DendrogramNode targetNode;
     Set<DendrogramEdge> childEdges;
-    double distance;
+    double distance=0f;
     
     
 
