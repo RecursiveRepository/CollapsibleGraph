@@ -14,6 +14,7 @@ public interface DendrogramEdge {
     
     public DendrogramNode getSourceDendrogramNode();
     public DendrogramNode getTargetDendrogramNode();
+    public void setDistance(double distance);
     public double getDistance();
     public Set<DendrogramEdge> getChildEdges();
     
