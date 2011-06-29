@@ -22,7 +22,13 @@ public class ClusterDendrogramNode implements DendrogramNode{
         this.distance = distance;
         this.childNodes = childNodes;
     }
-
+        /**
+         * * 
+         * @param partitionDistance
+         * @return
+         * @deprecated Implementing DendrogramEdges necessitated making the DendrogramSlicer class for this. Use that.
+         */
+        @Deprecated
         public Set<DendrogramNode> partitionByDistance(double partitionDistance) {
         Set<DendrogramNode> clusterSet = new HashSet<DendrogramNode>();
 

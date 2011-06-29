@@ -32,6 +32,13 @@ public class LeafDendrogramNode implements DendrogramNode {
         return nodeSet;
     }
 
+         /**
+         * * 
+         * @param partitionDistance
+         * @return
+         * @deprecated Implementing DendrogramEdges necessitated making the DendrogramSlicer class for this. Use that.
+         */
+    @Deprecated
     public Set<DendrogramNode> partitionByDistance(double partitionDistance) {
         Set<DendrogramNode> partitionSet = new HashSet<DendrogramNode>();
         partitionSet.add(this);
