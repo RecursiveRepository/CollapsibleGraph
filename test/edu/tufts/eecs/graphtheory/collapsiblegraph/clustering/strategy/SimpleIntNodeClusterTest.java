@@ -39,6 +39,7 @@ public class SimpleIntNodeClusterTest {
         
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         Set<Edge> dendrogramEdges = new HashSet<Edge>();
+        //2->4, 2->16
         dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(3)));
         dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(1)));
         Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
