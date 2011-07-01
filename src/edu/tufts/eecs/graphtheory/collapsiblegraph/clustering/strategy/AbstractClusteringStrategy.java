@@ -57,11 +57,6 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
 
         DendrogramEdge[] dendrogramEdges = new DendrogramEdge[graphEdges.size()];
-        long[] edgeVersions = new long[graphEdges.size()];
-
-        for (int i = 0; i < edgeVersions.length; i++) {
-            edgeVersions[i] = 0L;
-        }
 
         List<List<Integer>> outgoingEdgeIndices = new ArrayList<List<Integer>>(graphNodes.size());
         List<List<Integer>> incomingEdgeIndices = new ArrayList<List<Integer>>(graphNodes.size());
@@ -155,7 +150,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         //A loop that clusters the closest pair of DendrogramNodes repeatedly until there's only 1 left.
         int newlyAssignedIndex = -1;
 
-        int currentEdgeVersionNumber = 1;
+
 
         while (dendrogramNodeIndices.size() > 1) {
             double minDistance = Double.MAX_VALUE;
@@ -189,16 +184,16 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             Map<Integer, DendrogramEdge> changes = new TreeMap<Integer, DendrogramEdge>();
             
             if (incomingEdgeIndices.get(index1) != null) {
-                updateEdges(incomingEdgeIndices.get(index1), edgeVersions, dendrogramEdges, oldNodeToNewNode, currentEdgeVersionNumber, minDistance, sourceDNodesToEdges, targetDNodesToEdges, true,newPair, changes);
+                updateEdges(incomingEdgeIndices.get(index1),  dendrogramEdges, oldNodeToNewNode,  minDistance, sourceDNodesToEdges, targetDNodesToEdges, true,newPair, changes);
             }
             if (incomingEdgeIndices.get(index2) != null) {
-                updateEdges(incomingEdgeIndices.get(index2), edgeVersions, dendrogramEdges, oldNodeToNewNode, currentEdgeVersionNumber, minDistance, sourceDNodesToEdges, targetDNodesToEdges, true, newPair, changes);
+                updateEdges(incomingEdgeIndices.get(index2), dendrogramEdges, oldNodeToNewNode, minDistance, sourceDNodesToEdges, targetDNodesToEdges, true, newPair, changes);
             }
             if (outgoingEdgeIndices.get(index1) != null) {
-                updateEdges(outgoingEdgeIndices.get(index1), edgeVersions, dendrogramEdges, oldNodeToNewNode, currentEdgeVersionNumber, minDistance, sourceDNodesToEdges, targetDNodesToEdges, false, newPair, changes);
+                updateEdges(outgoingEdgeIndices.get(index1), dendrogramEdges, oldNodeToNewNode,  minDistance, sourceDNodesToEdges, targetDNodesToEdges, false, newPair, changes);
             }
             if (outgoingEdgeIndices.get(index2) != null) {
-                updateEdges(outgoingEdgeIndices.get(index2), edgeVersions, dendrogramEdges, oldNodeToNewNode, currentEdgeVersionNumber, minDistance, sourceDNodesToEdges, targetDNodesToEdges, false, newPair, changes);
+                updateEdges(outgoingEdgeIndices.get(index2),  dendrogramEdges, oldNodeToNewNode,  minDistance, sourceDNodesToEdges, targetDNodesToEdges, false, newPair, changes);
             }
 
             for(Entry<Integer, DendrogramEdge> change : changes.entrySet()) {
@@ -246,15 +241,10 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
             System.out.println(
                     "Removed 1 DNode, " + dendrogramNodeIndices.size() + " remaining in " + (elapsedTime / 1000));
-            if (currentEdgeVersionNumber == Long.MAX_VALUE) {
-                throw new RuntimeException("With apologies, you have too many edges in your graph.");
-            }
-            currentEdgeVersionNumber++;
 
         }
         distanceExecutor.shutdown();
         Dendrogram finalDendrogram = new Dendrogram(dendrogramNodes[newlyAssignedIndex], dendrogramEdges[0]);
-        finalDendrogram.setDendrogramEdges(dEdges);
         return finalDendrogram;
     }
 
@@ -339,47 +329,58 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         }
     }
 
-    private void updateEdges(List<Integer> edgeIndices, long[] edgeVersions, DendrogramEdge[] dendrogramEdges, Map<DendrogramNode, DendrogramNode> oldNodeToNewNode, int currentEdgeVersionNumber, double minDistance,
+    /*
+     * updateEdges is called to update either incoming or outgoing edges that had been attached to one of two newly clustered DedrogramNodes.
+     * isSource is to say whether we're updating the edges where a given node was the SOURCE, (false if we're looking at the edges where given node was the target
+     * 
+     */
+    private void updateEdges(List<Integer> edgeIndices,DendrogramEdge[] dendrogramEdges, Map<DendrogramNode, DendrogramNode> oldNodeToNewNode,double minDistance,
             Map<DendrogramNode, Integer> sourceDNodesToEdges, Map<DendrogramNode, Integer> targetDNodesToEdges, boolean isSource, Set<DendrogramNode> newPair, Map<Integer, DendrogramEdge> changes) {
-
+        //Iterate over the edge indices provided in the input list
         for (Integer edgeIndex : edgeIndices) {
-            
-            if ((isSource && targetDNodesToEdges.containsKey(dendrogramEdges[edgeIndex].getTargetDendrogramNode()) && newPair.contains(dendrogramEdges[edgeIndex].getSourceDendrogramNode() ))
+           //If the the node we're looking at got clustered, and we've already seen the other node touching this edge (in the same source/target role),
+
+           if ((isSource && targetDNodesToEdges.containsKey(dendrogramEdges[edgeIndex].getTargetDendrogramNode()) && newPair.contains(dendrogramEdges[edgeIndex].getSourceDendrogramNode() ))
                     || (!isSource && sourceDNodesToEdges.containsKey(dendrogramEdges[edgeIndex].getSourceDendrogramNode()) && newPair.contains(dendrogramEdges[edgeIndex].getTargetDendrogramNode() ))) {
-                Integer previouslyCreatedEdgeIndex = null;
-                
+           //Then there is already an edge going from this new cluster to that other node in the correct direction, and we should just add this edge to that
+           //edge's children                
+               Integer previouslyCreatedEdgeIndex = null;
+               
                 if (isSource) {
                     previouslyCreatedEdgeIndex = targetDNodesToEdges.get(dendrogramEdges[edgeIndex].getTargetDendrogramNode());
                 } else {
                     previouslyCreatedEdgeIndex = sourceDNodesToEdges.get(dendrogramEdges[edgeIndex].getSourceDendrogramNode());
                 }
+                
                 changes.get(previouslyCreatedEdgeIndex).getChildEdges().add(dendrogramEdges[edgeIndex]);
                 changes.put(edgeIndex,  changes.get(previouslyCreatedEdgeIndex));
-
-            } else {
-
-
+       } else {
+               //There wasn't already a pre-existing edge corresponding to this one, so we'll have to make a new one
+               //Source node tries to see if the source node of our edge was one of the two re-clustered 
+               //If so, add the target to the list of nodes there's already an edge to
+               //if not, then the source remains as the source of this edge
                 DendrogramNode sourceNode = oldNodeToNewNode.get(dendrogramEdges[edgeIndex].getSourceDendrogramNode());
                 if (sourceNode == null) {
                     sourceNode = dendrogramEdges[edgeIndex].getSourceDendrogramNode();
                 } else {
                     targetDNodesToEdges.put(dendrogramEdges[edgeIndex].getTargetDendrogramNode(), edgeIndex);
                 }
-
+                //Vice versa of above
                 DendrogramNode targetNode = oldNodeToNewNode.get(dendrogramEdges[edgeIndex].getTargetDendrogramNode());
                 if (targetNode == null) {
                     targetNode = dendrogramEdges[edgeIndex].getTargetDendrogramNode();
                 } else {
                     sourceDNodesToEdges.put(dendrogramEdges[edgeIndex].getSourceDendrogramNode(), edgeIndex);
                 }
-
+                
+                //Create the new edge
                 DendrogramEdge newEdge = new DendrogramEdgeImpl(sourceNode, targetNode);;
 
                 newEdge.setDistance(minDistance);
                 newEdge.getChildEdges().add(dendrogramEdges[edgeIndex]);
-
+                //Add it to the list of changes to be made
                 changes.put(edgeIndex, newEdge);
-                edgeVersions[edgeIndex] = currentEdgeVersionNumber;
+
             }
 
 
