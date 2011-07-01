@@ -25,47 +25,42 @@ public class DendrogramSlicerImpl implements DendrogramSlicer {
 
     public DendrogramSlice partitionByDistance(double distance, Dendrogram dendrogram) {
         DendrogramNode rootNode = dendrogram.getRootNode();
-        DendrogramEdge[] dEdges = dendrogram.getDendrogramEdges();
-        
+        DendrogramEdge rootEdge = dendrogram.getRootEdge();
+
         List<DendrogramNode> dendrogramNodes = new ArrayList<DendrogramNode>();
         Set<DendrogramEdge> dendrogramEdges = new HashSet<DendrogramEdge>();
         Map<DendrogramNode, DendrogramNode> dNodeToParentDNode = new HashMap<DendrogramNode, DendrogramNode>();
 
-        List<DendrogramNodeAndParent> nodesToCheck = new ArrayList<DendrogramNodeAndParent>();
-        nodesToCheck.add(new DendrogramNodeAndParent(rootNode, null));
+        List<DendrogramNode> nodesToCheck = new ArrayList<DendrogramNode>();
+        nodesToCheck.add(rootNode);
 
         while (!nodesToCheck.isEmpty()) {
-            DendrogramNodeAndParent thisNodeAndParent = nodesToCheck.remove(0);
-            DendrogramNode thisNode = thisNodeAndParent.getNode();
-            DendrogramNode parentNode = thisNodeAndParent.getParent();
-
-            if (thisNode instanceof LeafDendrogramNode) {
-                dendrogramNodes.add(thisNode);
-                dNodeToParentDNode.put(thisNode, parentNode == null ? thisNode : parentNode);
-            } else if (thisNode instanceof ClusterDendrogramNode) {
-                if (((ClusterDendrogramNode) thisNode).getDistance() > distance) {
-                    for (DendrogramNode childNode : ((ClusterDendrogramNode) thisNode).getChildNodes()) {
-                        nodesToCheck.add(new DendrogramNodeAndParent(childNode, null));
-                    }
+            DendrogramNode nodeToCheck = nodesToCheck.remove(nodesToCheck.size() - 1);
+            if (nodeToCheck instanceof LeafDendrogramNode) {
+                dendrogramNodes.add(nodeToCheck);
+            } else {
+                ClusterDendrogramNode thisCluster = (ClusterDendrogramNode) nodeToCheck;
+                if (thisCluster.getDistance() > distance) {
+                    nodesToCheck.addAll(thisCluster.getChildNodes());
                 } else {
-                    if (parentNode == null) {
-                        parentNode = thisNode;
-                        dendrogramNodes.add(thisNode);
-                    }
-                    
-                    dNodeToParentDNode.put(thisNode, parentNode);
-                    
-                    for (DendrogramNode childNode : ((ClusterDendrogramNode) thisNode).getChildNodes()) {
-                        nodesToCheck.add(new DendrogramNodeAndParent(childNode, parentNode));
-                    }
+                    dendrogramNodes.add(nodeToCheck);
                 }
             }
+
         }
-        
-        for(DendrogramEdge edge : dEdges) {
-            dendrogramEdges.add(new DendrogramEdgeImpl(dNodeToParentDNode.get(edge.getSourceDendrogramNode()),
-                                                       dNodeToParentDNode.get(edge.getTargetDendrogramNode())));
+
+        List<DendrogramEdge> edgesToCheck = new ArrayList<DendrogramEdge>();
+        edgesToCheck.add(rootEdge);
+
+        while (!edgesToCheck.isEmpty()) {
+            DendrogramEdge edgeToCheck = edgesToCheck.remove(edgesToCheck.size() - 1);
+            if (edgeToCheck.getDistance() > distance) {
+                edgesToCheck.addAll(edgeToCheck.getChildEdges());
+            } else {
+                dendrogramEdges.add(edgeToCheck);
+            }
         }
+
 
         DendrogramNode[] nodesArray = new DendrogramNode[1];
         DendrogramEdge[] edgesArray = new DendrogramEdge[1];
@@ -74,22 +69,5 @@ public class DendrogramSlicerImpl implements DendrogramSlicer {
         return new DendrogramSlice(dendrogramNodes.toArray(nodesArray), dendrogramEdges.toArray(edgesArray));
     }
 
-    private static class DendrogramNodeAndParent {
 
-        DendrogramNode node;
-        DendrogramNode parent;
-
-        public DendrogramNodeAndParent(DendrogramNode node, DendrogramNode parent) {
-            this.node = node;
-            this.parent = parent;
-        }
-
-        public DendrogramNode getNode() {
-            return node;
-        }
-
-        public DendrogramNode getParent() {
-            return parent;
-        }
-    }
 }
