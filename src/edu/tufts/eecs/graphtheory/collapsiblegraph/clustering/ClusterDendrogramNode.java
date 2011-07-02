@@ -6,6 +6,7 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ import java.util.Set;
  *
  * @author Jeremy
  */
-public class ClusterDendrogramNode implements DendrogramNode{
+public class ClusterDendrogramNode implements DendrogramNode, Serializable{
 
     private double distance;
     private Set<DendrogramNode> childNodes;

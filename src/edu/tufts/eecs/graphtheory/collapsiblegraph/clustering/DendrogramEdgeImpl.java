@@ -1,6 +1,6 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,7 +8,7 @@ import java.util.Set;
  *
  * @author Jeremy
  */
-public class DendrogramEdgeImpl implements DendrogramEdge {
+public class DendrogramEdgeImpl implements DendrogramEdge, Serializable {
 
     DendrogramNode sourceNode;
     DendrogramNode targetNode;

@@ -4,13 +4,16 @@
  */
 package edu.tufts.eecs.graphtheory.collapsiblegraph.node;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Jeremy
  */
-public class IntNode extends SkeletonNode{
+public class IntNode extends SkeletonNode implements Serializable{
     
     private int value;
+    
     public IntNode(int value) {
         super(value+"");
         this.value=value;
@@ -18,6 +21,10 @@ public class IntNode extends SkeletonNode{
     
     public int getValue() {
         return value;
+    }
+    
+    public void setValue() {
+        this.value = value;
     }
     
     public double getDistance(Node otherIntNode) {

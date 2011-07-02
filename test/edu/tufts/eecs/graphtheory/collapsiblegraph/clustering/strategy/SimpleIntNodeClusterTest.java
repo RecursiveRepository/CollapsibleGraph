@@ -9,6 +9,8 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.SkeletonEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.persistance.DendrogramLoader;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.persistance.DendrogramSaver;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
@@ -45,6 +47,9 @@ public class SimpleIntNodeClusterTest {
         Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicerImpl();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
+        DendrogramSaver.saveDendrogram(dendrogram, "c:\\\\users\\jeremy\\saver.txt");
+        Dendrogram otherDendrogram = DendrogramLoader.loadDendrogram("c:\\\\users\\jeremy\\saver.txt");
+        
         System.out.println("All done.");
     }
 }

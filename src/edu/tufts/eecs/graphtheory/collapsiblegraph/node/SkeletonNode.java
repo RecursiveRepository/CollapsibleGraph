@@ -5,13 +5,14 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.node;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  *
  * @author Jeremy
  */
-public class SkeletonNode implements Node {
+public class SkeletonNode implements Node, Serializable {
     private String name;
     private Set<Edge> incomingEdgeSet;
     private Set<Edge> outgoingEdgeSet;
