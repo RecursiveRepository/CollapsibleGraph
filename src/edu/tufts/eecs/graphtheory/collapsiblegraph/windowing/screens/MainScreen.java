@@ -40,7 +40,7 @@ public class MainScreen {
         loadGraphButton.setCaptionLabel("Load Pre-Processed Graph");
         loadGraphButton.hide();
        
-        submitButton = guiController.addButton("submit", 2, 580, 300, 60, 30);
+        submitButton = guiController.addButton("submit", 2, 700, 300, 60, 20);
         submitButton.setCaptionLabel("Submit");
         submitButton.hide(); 
         
@@ -84,7 +84,7 @@ public class MainScreen {
                 
                 break;
             }
-
+            
         }
         return ApplicationState.MAIN_SCREEN;
     }
@@ -101,19 +101,22 @@ public class MainScreen {
         theirDendrogram = (Dendrogram)theirDendrogramStream.readObject();
         theirFileStream.close();
         theirDendrogramStream.close();
+        
+        graphLocation.hide();
+        submitButton.hide();
+        guiController.draw();
+        
         } catch ( Exception e) {
             e.printStackTrace(System.err);
             return null;
         }
         
-        
-        mainScreenState = MainScreenState.PROCESS_GRAPH;
+        mainScreenState = MainScreenState.INITIAL;
         return theirDendrogram;
     }
     private enum MainScreenState {
 
         INITIAL,
         SELECT_PREPROCESSED_GRAPH,
-        PROCESS_GRAPH;
     }
 }

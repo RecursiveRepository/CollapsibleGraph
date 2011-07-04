@@ -2,6 +2,8 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.windowing;
 
 import controlP5.ControlEvent;
 import controlP5.ControlP5;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.screens.GraphRendererScreen;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.screens.IntroScreen;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.screens.MainScreen;
 import processing.core.PApplet;
@@ -15,7 +17,11 @@ public class GraphPapplet extends PApplet {
     private ApplicationState currentState;
     private MainScreen mainScreen;
     private IntroScreen introScreen;
+    private GraphRendererScreen graphRendererScreen;
     private ControlP5 guiController;
+    private Dendrogram dendrogram;
+    
+
 
     @Override
     public void setup() {
@@ -26,6 +32,7 @@ public class GraphPapplet extends PApplet {
         Fonts.initialize(this);
         mainScreen = MainScreen.getMainScreen(this, guiController);
         introScreen = IntroScreen.getIntroScreen(this, guiController);
+        graphRendererScreen = GraphRendererScreen.getGraphRendererScreen(this, guiController);
         
         currentState = ApplicationState.INTRO_SCREEN;
 
@@ -43,7 +50,14 @@ public class GraphPapplet extends PApplet {
             
             case MAIN_SCREEN: {
                 currentState = mainScreen.draw();
+                break;
             }
+            
+            case GRAPH_RENDERER_SCREEN: {
+                currentState = graphRendererScreen.draw();
+                break;
+            }
+           
         }
     }
     
@@ -53,8 +67,15 @@ public class GraphPapplet extends PApplet {
         if(eventName.equals("loadGraph")) {
             mainScreen.loadGraph();
         } 
-        if(eventName.contains("submit")) {
-            mainScreen.processGraph();
+        if(eventName.equals("submit")) {
+            graphRendererScreen.setDendrogram(mainScreen.processGraph());
+            currentState = ApplicationState.GRAPH_RENDERER_SCREEN;
+        }
+        if(eventName.equals("zoomSlider")) {
+            graphRendererScreen.setZoomLevel((double)theEvent.controller().value());
+        }
+        if(eventName.equals("zoomButton")) {
+            graphRendererScreen.redraw();
         }
     }
     

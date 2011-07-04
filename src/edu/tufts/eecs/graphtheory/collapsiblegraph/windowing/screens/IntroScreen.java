@@ -36,7 +36,6 @@ public class IntroScreen {
         }
 
         papplet.fill(255, 255, 255);
-        PFont font = papplet.createFont("Consolas", 32, false);
         papplet.textFont(Fonts.getLargeFont());
         papplet.textAlign(papplet.CENTER);
         papplet.text("Collapsible Graph System", 512, 150);
