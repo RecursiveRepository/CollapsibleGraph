@@ -101,9 +101,10 @@ public class GraphRendererScreen {
             nodes = nodes + selectedDataNode.toString() + ",";
         }
         papplet.fill(0, 0, 255);
+        papplet.line(0, 500, 1024, 500);
         papplet.textFont(Fonts.getMediumFont());
         papplet.textAlign(papplet.LEFT);
-        papplet.text(nodes,400 , 520);
+        papplet.text(nodes, 400 , 520);
         }
         return ApplicationState.GRAPH_RENDERER_SCREEN;
     }

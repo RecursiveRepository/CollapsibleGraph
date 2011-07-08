@@ -66,11 +66,15 @@ public class GraphPapplet extends PApplet {
         String eventName = theEvent.controller().name();
         if(eventName.equals("loadGraph")) {
             mainScreen.loadGraph();
-        } 
+        }
+        
         if(eventName.equals("submit")) {
             graphRendererScreen.setDendrogram(mainScreen.processGraph());
+            graphRendererScreen.redraw();
+            graphRendererScreen.draw();
             currentState = ApplicationState.GRAPH_RENDERER_SCREEN;
         }
+        
         if(eventName.equals("zoomSlider")) {
             graphRendererScreen.setZoomLevel((double)theEvent.controller().value());
         }
