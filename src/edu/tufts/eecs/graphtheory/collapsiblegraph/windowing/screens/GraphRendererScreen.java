@@ -14,6 +14,7 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.ApplicationState;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.Fonts;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ForceDirectedLayoutGenerator;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.GraphLayout;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ViewableDendrogramEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ViewableDendrogramNode;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class GraphRendererScreen {
     private Dendrogram dendrogram;
     private DendrogramSlicer dendrogramSlicer;
     double partitionDistance = 0.0F;
+    private List<ViewableDendrogramEdge> viewableDEdges;
     private List<ViewableDendrogramNode> viewableDNodes;
     private boolean recentlyRendered = false;
     private ViewableDendrogramNode selectedNode;
@@ -99,6 +101,14 @@ public class GraphRendererScreen {
             papplet.ellipseMode(papplet.CENTER);
             papplet.ellipse(viewableNode.getXCoordinate(), viewableNode.getYCoordinate(), viewableNode.getDiameter(), viewableNode.getDiameter());
         }
+        
+        papplet.stroke(0,0,255);
+        for (ViewableDendrogramEdge viewableEdge : viewableDEdges) {
+            papplet.line(viewableEdge.getSourceNode().getXCoordinate(), viewableEdge.getSourceNode().getYCoordinate(),
+                    viewableEdge.getTargetNode().getXCoordinate(), viewableEdge.getTargetNode().getYCoordinate());
+
+        }
+        
         if(selectedDataNodes!=null && !selectedDataNodes.isEmpty()) {
         String nodes = "";
         for(Node selectedDataNode : selectedDataNodes) {
@@ -110,6 +120,9 @@ public class GraphRendererScreen {
         papplet.textAlign(papplet.LEFT);
         papplet.text(nodes, 400 , 520);
         }
+        
+        
+        
         return ApplicationState.GRAPH_RENDERER_SCREEN;
     }
 
@@ -123,14 +136,9 @@ public class GraphRendererScreen {
     public void redraw() {
         DendrogramSlice currentSlice = dendrogramSlicer.partitionByDistance(partitionDistance, dendrogram);
         GraphLayout newLayout = layoutGenerator.generateLayout(currentSlice);
-        List<ViewableDendrogramNode> nodesToShow = newLayout.getGraphNodes();
-        viewableDNodes.clear();
-        
-        
-        papplet.ellipseMode(papplet.CENTER);
-        for (ViewableDendrogramNode nodeToShow : nodesToShow) {
-            viewableDNodes.add(nodeToShow);
-        }
+
+        viewableDNodes = newLayout.getGraphNodes();
+        viewableDEdges = newLayout.getGraphEdges();
         draw();
     }
 
