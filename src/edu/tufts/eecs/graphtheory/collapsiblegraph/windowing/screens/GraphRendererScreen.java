@@ -12,6 +12,9 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.ApplicationState;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.Fonts;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ForceDirectedLayoutGenerator;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.GraphLayout;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ViewableDendrogramNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +38,7 @@ public class GraphRendererScreen {
     private boolean recentlyRendered = false;
     private ViewableDendrogramNode selectedNode;
     private Set<Node> selectedDataNodes;
+    private ForceDirectedLayoutGenerator layoutGenerator = new ForceDirectedLayoutGenerator();
 
     private GraphRendererScreen(PApplet papplet, ControlP5 guiController) {
         this.papplet = papplet;
@@ -93,7 +97,7 @@ public class GraphRendererScreen {
                 papplet.fill(255, 255, 255);
             }
             papplet.ellipseMode(papplet.CENTER);
-            papplet.ellipse(viewableNode.getXCoordinate(), viewableNode.getYCoordinate(), 50, 50);
+            papplet.ellipse(viewableNode.getXCoordinate(), viewableNode.getYCoordinate(), viewableNode.getDiameter(), viewableNode.getDiameter());
         }
         if(selectedDataNodes!=null && !selectedDataNodes.isEmpty()) {
         String nodes = "";
@@ -118,61 +122,17 @@ public class GraphRendererScreen {
 
     public void redraw() {
         DendrogramSlice currentSlice = dendrogramSlicer.partitionByDistance(partitionDistance, dendrogram);
-        DendrogramNode[] nodesToShow = currentSlice.getVisibleDendrogramNodes();
-
+        GraphLayout newLayout = layoutGenerator.generateLayout(currentSlice);
+        List<ViewableDendrogramNode> nodesToShow = newLayout.getGraphNodes();
         viewableDNodes.clear();
-
-
-        int maxX = 1024;
-        int maxY = 500;
-        int x = 25;
-        int y = 25;
-
+        
+        
         papplet.ellipseMode(papplet.CENTER);
-        for (DendrogramNode nodeToShow : nodesToShow) {
-            ViewableDendrogramNode nextNode = new ViewableDendrogramNode(nodeToShow, 50, x, y);
-            x += 60;
-            if (x > maxX - 25) {
-                x = 25;
-                y += 60;
-            }
-            if (y > maxY - 25) {
-                System.out.println("Problem! Too many DNodes!");
-                return;
-            }
-            viewableDNodes.add(nextNode);
+        for (ViewableDendrogramNode nodeToShow : nodesToShow) {
+            viewableDNodes.add(nodeToShow);
         }
         draw();
     }
 
-    private static class ViewableDendrogramNode {
-
-        DendrogramNode dendrogramNode;
-        int diameter;
-        int xCoordinate;
-        int yCoordinate;
-
-        public ViewableDendrogramNode(DendrogramNode dendrogramNode, int diameter, int xCoordinate, int yCoordinate) {
-            this.dendrogramNode = dendrogramNode;
-            this.diameter = diameter;
-            this.xCoordinate = xCoordinate;
-            this.yCoordinate = yCoordinate;
-        }
-
-        public DendrogramNode getDendrogramNode() {
-            return dendrogramNode;
-        }
-
-        public int getDiameter() {
-            return diameter;
-        }
-
-        public int getXCoordinate() {
-            return xCoordinate;
-        }
-
-        public int getYCoordinate() {
-            return yCoordinate;
-        }
-    }
+   
 }
