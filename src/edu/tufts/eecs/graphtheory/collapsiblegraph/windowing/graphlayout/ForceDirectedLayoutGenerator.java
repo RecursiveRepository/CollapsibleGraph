@@ -20,10 +20,11 @@ public class ForceDirectedLayoutGenerator {
     private static int MIN_Y = 0;
     private static int MAX_Y = 500;
     private static int DIAMETER = 20;
-    private static final int SPRING_EQUILIBRIUM_DISTANCE = 10;
-    private static final int HOOKE_CONSTANT = 1;
-    private static final float COULOMB_CONSTANT = 8987000000f;
-    private static final float MOMENTUM_DAMPENING_CONSTANT = .3f;
+    private static final int SPRING_EQUILIBRIUM_DISTANCE = 40;
+    private static final int HOOKE_CONSTANT = 100;
+    private static final float COULOMB_CONSTANT = 8987000000f/ 100f;
+    private static final float VELOCITY_MODIFIER = .0001f;
+    private static final float MOMENTUM_DAMPENING_CONSTANT = .6f;
     private static final Random generator = new Random();
     private Map<DendrogramNode, ViewableDendrogramNode> nodeToViewable = new HashMap<DendrogramNode, ViewableDendrogramNode>();
 
@@ -43,6 +44,7 @@ public class ForceDirectedLayoutGenerator {
             ViewableDendrogramNode newVDNode = new ViewableDendrogramNode(thisNode, DIAMETER, xCoord, yCoord);
             nodeToViewable.put(thisNode, newVDNode);
             TemporaryLayoutNode newBouncyNode = new TemporaryLayoutNode(newVDNode);
+            newVDNode.setLayoutNode(newBouncyNode);
             layoutNodes.add(newBouncyNode);
         }
 
@@ -58,26 +60,32 @@ public class ForceDirectedLayoutGenerator {
         float kineticEnergy = 1000000000f;
         float previousKineticEnergy = 2 * kineticEnergy;
         int iterations = 0;
-        while (Math.abs(previousKineticEnergy - kineticEnergy) / kineticEnergy > .01f && iterations < 10000) {
+        while (kineticEnergy>10 && iterations < 10000) {
             previousKineticEnergy = kineticEnergy;
             kineticEnergy = 0f;
+            System.out.println("Iteration " + iterations );
+            int node = 0;
             for (TemporaryLayoutNode layoutNode : layoutNodes) {
+                System.out.print(" node: " + node + "  ");
                 layoutNode.setXForce(0F);
                 layoutNode.setYForce(0F);
-
+                System.out.print(" x:" + layoutNode.getVDNode().getXCoordinate() + "  y:" + layoutNode.getVDNode().getYCoordinate());
                 for (TemporaryLayoutNode otherLayoutNode : layoutNodes) {
                     if (layoutNode != otherLayoutNode) {
                         calculateColoumbRepulsion(layoutNode, otherLayoutNode);
+                        System.out.print("  postcoloumbX:" + layoutNode.getXForce() + "  postcoloumbY: " + layoutNode.getYForce());
                     }
                 }
                 
                 for (ViewableDendrogramEdge vDEdge : dendrogramEdges) {
-                    System.out.println("LOL");
                     calculateHookeAttraction(vDEdge);
                 }
+
                 
-                layoutNode.setXVelocity(layoutNode.getXVelocity() * MOMENTUM_DAMPENING_CONSTANT + layoutNode.getXForce());
-                layoutNode.setYVelocity(layoutNode.getYVelocity() * MOMENTUM_DAMPENING_CONSTANT + layoutNode.getYForce());
+                layoutNode.setXVelocity(VELOCITY_MODIFIER * (layoutNode.getXVelocity() * MOMENTUM_DAMPENING_CONSTANT + layoutNode.getXForce()));
+                layoutNode.setYVelocity(VELOCITY_MODIFIER * (layoutNode.getYVelocity() * MOMENTUM_DAMPENING_CONSTANT + layoutNode.getYForce()));
+                System.out.print("  postHookeX: " + layoutNode.getXForce() + "  postHookeY:" + layoutNode.getYForce() + "\n");
+                node++;
             }
 
 
@@ -156,7 +164,7 @@ public class ForceDirectedLayoutGenerator {
         int yDistance = sourceNode.getVDNode().getYCoordinate() - targetNode.getVDNode().getYCoordinate();
         float distance = calculateDistance(sourceNode.getVDNode(), targetNode.getVDNode());
 
-        float totalForce = HOOKE_CONSTANT * (SPRING_EQUILIBRIUM_DISTANCE - distance);
+        float totalForce = -1 * HOOKE_CONSTANT * (SPRING_EQUILIBRIUM_DISTANCE - distance);
 
         float sourceXForce = (xDistance / distance) * totalForce;
         float sourceYForce = (yDistance / distance) * totalForce;
