@@ -8,6 +8,7 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
  */
  public class ViewableDendrogramNode {
 
+        TemporaryLayoutNode layoutNode;
         DendrogramNode dendrogramNode;
         int diameter;
         int xCoordinate;
@@ -42,5 +43,13 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 
         public void setYCoordinate(int yCoordinate) {
             this.yCoordinate = yCoordinate;
+        }
+        
+        public void setLayoutNode(TemporaryLayoutNode layoutNode) {
+            this.layoutNode = layoutNode;
+        }
+        
+        public TemporaryLayoutNode getLayoutNode() {
+            return layoutNode;
         }
     }
