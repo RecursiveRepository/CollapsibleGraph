@@ -20,9 +20,9 @@ public class ForceDirectedLayoutGenerator {
     private static int MIN_Y = 0;
     private static int MAX_Y = 500;
     private static int DIAMETER = 20;
-    private static final int SPRING_EQUILIBRIUM_DISTANCE = 40;
-    private static final int HOOKE_CONSTANT = 100;
-    private static final float COULOMB_CONSTANT = 8987000000f/ 100f;
+    private static final int SPRING_EQUILIBRIUM_DISTANCE = 20;
+    private static final int HOOKE_CONSTANT = 1;
+    private static final float COULOMB_CONSTANT = 8987000000f/ 1f;
     private static final float VELOCITY_MODIFIER = .0001f;
     private static final float MOMENTUM_DAMPENING_CONSTANT = .6f;
     private static final Random generator = new Random();
@@ -60,7 +60,7 @@ public class ForceDirectedLayoutGenerator {
         float kineticEnergy = 1000000000f;
         float previousKineticEnergy = 2 * kineticEnergy;
         int iterations = 0;
-        while (kineticEnergy>10 && iterations < 10000) {
+        while ( iterations < 4000 && kineticEnergy>1) {
             previousKineticEnergy = kineticEnergy;
             kineticEnergy = 0f;
             System.out.println("Iteration " + iterations );
@@ -95,8 +95,8 @@ public class ForceDirectedLayoutGenerator {
                 float xVelocity = layoutNode.getXVelocity();
                 float yVelocity = layoutNode.getYVelocity();
 
-                int newYCoordinate = (int) (oldXCoordinate + xVelocity);;
-                int newXCoordinate = (int) (oldYCoordinate + yVelocity);
+                int newXCoordinate = (int) (oldXCoordinate + xVelocity);;
+                int newYCoordinate = (int) (oldYCoordinate + yVelocity);
 
                 int radius = layoutNode.getVDNode().getDiameter() / 2;
 
