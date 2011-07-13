@@ -60,7 +60,7 @@ public class ForceDirectedLayoutGenerator {
         float kineticEnergy = 1000000000f;
         float previousKineticEnergy = 2 * kineticEnergy;
         int iterations = 0;
-        while ( iterations < 4000 && kineticEnergy>1) {
+        while ((iterations < 4000 && (kineticEnergy >1 || iterations < 10)) ) {
             previousKineticEnergy = kineticEnergy;
             kineticEnergy = 0f;
             System.out.println("Iteration " + iterations );
@@ -116,9 +116,9 @@ public class ForceDirectedLayoutGenerator {
                 layoutNode.getVDNode().setXCoordinate(newXCoordinate);
                 layoutNode.getVDNode().setYCoordinate(newYCoordinate);
                 kineticEnergy += Math.abs(xVelocity) + Math.abs(yVelocity);
-                iterations++;
+                
             }
-
+            iterations++;
         }
 
 
