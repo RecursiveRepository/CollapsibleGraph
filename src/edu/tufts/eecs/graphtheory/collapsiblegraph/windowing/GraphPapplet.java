@@ -38,7 +38,7 @@ public class GraphPapplet extends PApplet {
         smooth();
     }
 
-    @Override
+    @Override 
     public void draw() {
         switch (currentState) {
             case INTRO_SCREEN: {

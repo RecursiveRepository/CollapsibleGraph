@@ -83,7 +83,9 @@ public class GraphRendererScreen {
         slider.show();
         zoom.show();
         guiController.draw();
-
+        viewableDNodes = layoutGenerator.getGraphNodes();
+        viewableDEdges = layoutGenerator.getGraphEdges();
+        
         for (ViewableDendrogramNode viewableNode : viewableDNodes) {
 
             if (papplet.mousePressed) {
@@ -122,7 +124,7 @@ public class GraphRendererScreen {
         }
         
         
-        
+        layoutGenerator.iterate();
         return ApplicationState.GRAPH_RENDERER_SCREEN;
     }
 
@@ -135,10 +137,8 @@ public class GraphRendererScreen {
 
     public void redraw() {
         DendrogramSlice currentSlice = dendrogramSlicer.partitionByDistance(partitionDistance, dendrogram);
-        GraphLayout newLayout = layoutGenerator.generateLayout(currentSlice);
+        layoutGenerator.setupLayout(currentSlice);
 
-        viewableDNodes = newLayout.getGraphNodes();
-        viewableDEdges = newLayout.getGraphEdges();
         draw();
     }
 

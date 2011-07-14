@@ -21,20 +21,44 @@ public class ForceDirectedLayoutGenerator {
     private static int MAX_Y = 500;
     private static int DIAMETER = 20;
     private static final int SPRING_EQUILIBRIUM_DISTANCE = 20;
-    private static final int HOOKE_CONSTANT = 1;
-    private static final float COULOMB_CONSTANT = 8987000000f/ 1f;
-    private static final float VELOCITY_MODIFIER = .0001f;
-    private static final float MOMENTUM_DAMPENING_CONSTANT = .6f;
+    private static final float HOOKE_CONSTANT = 10f;
+    private static final float COULOMB_CONSTANT = 8987000000f/ 10f;
+    private static final float VELOCITY_MODIFIER = .01f;
+    private static final float MOMENTUM_DAMPENING_CONSTANT = .5f;
     private static final Random generator = new Random();
     private Map<DendrogramNode, ViewableDendrogramNode> nodeToViewable = new HashMap<DendrogramNode, ViewableDendrogramNode>();
+    
+    private List<ViewableDendrogramNode> vDNodes;
+    private List<ViewableDendrogramEdge> vDEdges;        
+    private float kineticEnergy=10000000;
+    private float previousKineticEnergy=0;
+    private int iterations = 0;
 
-    public GraphLayout generateLayout(DendrogramSlice ds) {
+     List<TemporaryLayoutNode> layoutNodes ;
+    List<ViewableDendrogramEdge> dendrogramEdges;
+    
+    public List<ViewableDendrogramNode> getGraphNodes() {
+        return vDNodes;
+    }
+    
+    public List<ViewableDendrogramEdge> getGraphEdges() {
+        return vDEdges;
+    }
+    
+    public float getKineticEnergy() {
+        return kineticEnergy;
+    }
+    public void setupLayout(DendrogramSlice ds) {
+        kineticEnergy = 10000f;
+        vDNodes = new ArrayList<ViewableDendrogramNode>();
+        vDEdges = new ArrayList<ViewableDendrogramEdge>();
+
         nodeToViewable.clear();
         DendrogramNode[] nodeSet = ds.getVisibleDendrogramNodes();
         DendrogramEdge[] edgeSet = ds.getVisibleDendrogramEdges();
 
-        List<TemporaryLayoutNode> layoutNodes = new ArrayList<TemporaryLayoutNode>();
-        List<ViewableDendrogramEdge> dendrogramEdges = new ArrayList<ViewableDendrogramEdge>();
+        layoutNodes = new ArrayList<TemporaryLayoutNode>();
+        dendrogramEdges = new ArrayList<ViewableDendrogramEdge>();
         
 
         for (DendrogramNode thisNode : nodeSet) {
@@ -46,6 +70,7 @@ public class ForceDirectedLayoutGenerator {
             TemporaryLayoutNode newBouncyNode = new TemporaryLayoutNode(newVDNode);
             newVDNode.setLayoutNode(newBouncyNode);
             layoutNodes.add(newBouncyNode);
+            vDNodes.add(newVDNode);
         }
 
         for (DendrogramEdge thisEdge : edgeSet) {
@@ -53,14 +78,19 @@ public class ForceDirectedLayoutGenerator {
             dendrogramEdges.add(newVDE);
         }
         
-        List<ViewableDendrogramNode> vDNodes = new ArrayList<ViewableDendrogramNode>();
-        List<ViewableDendrogramEdge> vDEdges = new ArrayList<ViewableDendrogramEdge>();
+        for (DendrogramEdge dEdge : edgeSet) {
+            vDEdges.add(new ViewableDendrogramEdge(dEdge, nodeToViewable.get(dEdge.getSourceDendrogramNode()),
+                    nodeToViewable.get(dEdge.getTargetDendrogramNode())));
+        }    
+        iterations=0;
+    }
+    
+    
 
-
-        float kineticEnergy = 1000000000f;
-        float previousKineticEnergy = 2 * kineticEnergy;
-        int iterations = 0;
-        while ((iterations < 4000 && (kineticEnergy >1 || iterations < 10)) ) {
+    public void iterate() {
+            if(kineticEnergy < 10f) {
+                return;
+            }
             previousKineticEnergy = kineticEnergy;
             kineticEnergy = 0f;
             System.out.println("Iteration " + iterations );
@@ -73,18 +103,20 @@ public class ForceDirectedLayoutGenerator {
                 for (TemporaryLayoutNode otherLayoutNode : layoutNodes) {
                     if (layoutNode != otherLayoutNode) {
                         calculateColoumbRepulsion(layoutNode, otherLayoutNode);
-                        System.out.print("  postcoloumbX:" + layoutNode.getXForce() + "  postcoloumbY: " + layoutNode.getYForce());
+                        
                     }
                 }
-                
+                System.out.print("  postcoloumbX:" + layoutNode.getXForce() + "  postcoloumbY: " + layoutNode.getYForce());
                 for (ViewableDendrogramEdge vDEdge : dendrogramEdges) {
-                    calculateHookeAttraction(vDEdge);
+               //     calculateHookeAttraction(vDEdge);
                 }
 
                 
                 layoutNode.setXVelocity(VELOCITY_MODIFIER * (layoutNode.getXVelocity() * MOMENTUM_DAMPENING_CONSTANT + layoutNode.getXForce()));
                 layoutNode.setYVelocity(VELOCITY_MODIFIER * (layoutNode.getYVelocity() * MOMENTUM_DAMPENING_CONSTANT + layoutNode.getYForce()));
-                System.out.print("  postHookeX: " + layoutNode.getXForce() + "  postHookeY:" + layoutNode.getYForce() + "\n");
+                System.out.print("  postHookeX: " + layoutNode.getXForce() + "  postHookeY:" + layoutNode.getYForce());
+                System.out.print(" XVel: " + layoutNode.getXVelocity() + " YVel: " + layoutNode.getYVelocity() + "\n");
+                
                 node++;
             }
 
@@ -103,14 +135,18 @@ public class ForceDirectedLayoutGenerator {
 
                 if (newXCoordinate == Integer.MAX_VALUE || newXCoordinate + radius > MAX_X) {
                     newXCoordinate = MAX_X - radius;
+                    xVelocity = 0;
                 } else if (newXCoordinate == Integer.MIN_VALUE || newXCoordinate - radius < MIN_X) {
                     newXCoordinate = MIN_X + radius;
+                    xVelocity = 0;
                 }
 
                 if (newYCoordinate == Integer.MAX_VALUE || newYCoordinate + radius > MAX_Y) {
                     newYCoordinate = MAX_Y - radius;
+                    yVelocity = 0;
                 } else if (newYCoordinate == Integer.MIN_VALUE || newYCoordinate - radius < MIN_Y) {
                     newYCoordinate = MIN_Y + radius;
+                    yVelocity = 0;
                 }
 
                 layoutNode.getVDNode().setXCoordinate(newXCoordinate);
@@ -119,24 +155,8 @@ public class ForceDirectedLayoutGenerator {
                 
             }
             iterations++;
-        }
-
-
-
-        for (TemporaryLayoutNode bouncyNode : layoutNodes) {
-            vDNodes.add(bouncyNode.getVDNode());
-        }
-
-        for (DendrogramEdge dEdge : edgeSet) {
-            vDEdges.add(new ViewableDendrogramEdge(dEdge, nodeToViewable.get(dEdge.getSourceDendrogramNode()),
-                    nodeToViewable.get(dEdge.getTargetDendrogramNode())));
-        }
-
-
-        GraphLayout newLayout = new GraphLayout(vDNodes, vDEdges);
-        return newLayout;
     }
-
+    
     private static void calculateColoumbRepulsion(TemporaryLayoutNode nodeToChange, TemporaryLayoutNode nodeToObserve) {
         float distance = calculateDistance(nodeToChange.getVDNode(), nodeToObserve.getVDNode());
         float totalForce = COULOMB_CONSTANT / (float) Math.pow(distance, 2);
@@ -160,21 +180,27 @@ public class ForceDirectedLayoutGenerator {
         TemporaryLayoutNode sourceNode = vde.getSourceNode().getLayoutNode();
         TemporaryLayoutNode targetNode = vde.getTargetNode().getLayoutNode();
 
+        if(sourceNode==targetNode) {
+            return;
+        }
         int xDistance = sourceNode.getVDNode().getXCoordinate() - targetNode.getVDNode().getXCoordinate();
         int yDistance = sourceNode.getVDNode().getYCoordinate() - targetNode.getVDNode().getYCoordinate();
         float distance = calculateDistance(sourceNode.getVDNode(), targetNode.getVDNode());
 
-        float totalForce = -1 * HOOKE_CONSTANT * (SPRING_EQUILIBRIUM_DISTANCE - distance);
+        float totalForce = HOOKE_CONSTANT * (SPRING_EQUILIBRIUM_DISTANCE - distance);
 
         float sourceXForce = (xDistance / distance) * totalForce;
         float sourceYForce = (yDistance / distance) * totalForce;
-        sourceNode.setXForce(sourceXForce);
-        sourceNode.setYForce(sourceYForce);
+        sourceNode.setXForce(sourceNode.getXForce() + sourceXForce);
+        sourceNode.setYForce(sourceNode.getYForce() + sourceYForce);
 
+        xDistance = targetNode.getVDNode().getXCoordinate() - sourceNode.getVDNode().getXCoordinate();
+        yDistance = targetNode.getVDNode().getYCoordinate() - sourceNode.getVDNode().getYCoordinate();
+        
         float targetXForce = (xDistance / distance) * totalForce;
         float targetYForce = (yDistance / distance) * totalForce;
-        targetNode.setXForce(targetXForce);
-        targetNode.setYForce(targetYForce);
+        targetNode.setXForce(targetNode.getXForce() + targetXForce);
+        targetNode.setYForce(targetNode.getYForce() + targetYForce);
     }
 
     private static float calculateDistance(ViewableDendrogramNode node1, ViewableDendrogramNode node2) {
