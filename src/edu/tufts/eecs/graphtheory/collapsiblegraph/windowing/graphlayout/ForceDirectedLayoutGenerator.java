@@ -22,7 +22,7 @@ public class ForceDirectedLayoutGenerator {
     private static int DIAMETER = 20;
     private static final int SPRING_EQUILIBRIUM_DISTANCE = 20;
     private static final float HOOKE_CONSTANT = 10f;
-    private static final float COULOMB_CONSTANT = 8987000000f/ 10f;
+    private static final float COULOMB_CONSTANT = 8987000000f/ 100f;
     private static final float VELOCITY_MODIFIER = .01f;
     private static final float MOMENTUM_DAMPENING_CONSTANT = .5f;
     private static final Random generator = new Random();
@@ -108,7 +108,7 @@ public class ForceDirectedLayoutGenerator {
                 }
                 System.out.print("  postcoloumbX:" + layoutNode.getXForce() + "  postcoloumbY: " + layoutNode.getYForce());
                 for (ViewableDendrogramEdge vDEdge : dendrogramEdges) {
-               //     calculateHookeAttraction(vDEdge);
+                    calculateHookeAttraction(vDEdge);
                 }
 
                 
@@ -163,10 +163,10 @@ public class ForceDirectedLayoutGenerator {
 
         int xDistance = nodeToChange.getVDNode().getXCoordinate() - nodeToObserve.getVDNode().getXCoordinate();
         int yDistance = nodeToChange.getVDNode().getYCoordinate() - nodeToObserve.getVDNode().getYCoordinate();
-        if (xDistance < 1) {
+        if (xDistance == 0) {
             xDistance = 1;
         }
-        if (yDistance < 1) {
+        if (yDistance == 0) {
             yDistance = 1;
         }
         float xForce = (xDistance / distance) * totalForce;
