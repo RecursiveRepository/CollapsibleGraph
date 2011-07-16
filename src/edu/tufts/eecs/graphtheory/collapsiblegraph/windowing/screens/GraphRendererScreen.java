@@ -128,8 +128,6 @@ public class GraphRendererScreen {
         return ApplicationState.GRAPH_RENDERER_SCREEN;
     }
 
-    public void drawViewableDendrogramNodes(DendrogramNode[] nodesToShow) {
-    }
 
     public void setZoomLevel(double zoomLevel) {
         partitionDistance = zoomLevel;
