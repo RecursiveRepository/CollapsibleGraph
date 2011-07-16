@@ -45,9 +45,6 @@ public class ForceDirectedLayoutGenerator {
         return vDEdges;
     }
     
-    public float getKineticEnergy() {
-        return kineticEnergy;
-    }
     public void setupLayout(DendrogramSlice ds) {
         kineticEnergy = 10000f;
         vDNodes = new ArrayList<ViewableDendrogramNode>();
@@ -208,7 +205,6 @@ public class ForceDirectedLayoutGenerator {
         if (distance < .99) {
             distance = 1;
         }
-
         return distance;
     }
 }
