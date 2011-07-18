@@ -5,7 +5,6 @@ import controlP5.ControlP5;
 import controlP5.Slider;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
@@ -13,7 +12,6 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.ApplicationState;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.Fonts;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ForceDirectedLayoutGenerator;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.GraphLayout;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ViewableDendrogramEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ViewableDendrogramNode;
 import java.util.ArrayList;
@@ -31,7 +29,9 @@ public class GraphRendererScreen {
     private PApplet papplet;
     private ControlP5 guiController;
     private Slider slider;
-    private Button zoom;
+    private Button zoomButton;
+    private Button zoomOutButton;
+    private Button zoomInButton;
     private Dendrogram dendrogram;
     private DendrogramSlicer dendrogramSlicer;
     double partitionDistance = 0.0F;
@@ -56,12 +56,20 @@ public class GraphRendererScreen {
         slider.setCaptionLabel("");
         slider.hide();
 
-        zoom = guiController.addButton("zoomButton", 1, 250, 550, 80, 30);
-        zoom.setLabel("Zoom!");
-        zoom.hide();
+        zoomButton = guiController.addButton("zoomButton", 1, 250, 550, 80, 30);
+        zoomButton.setLabel("Zoom!");
+        zoomButton.hide();
+        
+
+        zoomOutButton = guiController.addButton("zoomOutButton", 2, 350, 550, 80, 30);
+        zoomOutButton.setLabel("Zoom Out");
+        zoomOutButton.hide();
+        
+        zoomInButton = guiController.addButton("zoomInButton", 2, 450, 550, 80, 30);
+        zoomInButton.setLabel("Zoom In");
+        zoomInButton.hide();
+        
         guiController.draw();
-
-
     }
 
     public static GraphRendererScreen getGraphRendererScreen(PApplet papplet, ControlP5 guiController) {
@@ -81,7 +89,9 @@ public class GraphRendererScreen {
     public ApplicationState draw() {
         papplet.background(0);
         slider.show();
-        zoom.show();
+        zoomButton.show();
+        zoomOutButton.show();
+        zoomInButton.show();
         guiController.draw();
         viewableDNodes = layoutGenerator.getGraphNodes();
         viewableDEdges = layoutGenerator.getGraphEdges();
@@ -123,7 +133,6 @@ public class GraphRendererScreen {
         papplet.text(nodes, 400 , 520);
         }
         
-        
         layoutGenerator.iterate();
         return ApplicationState.GRAPH_RENDERER_SCREEN;
     }
@@ -131,6 +140,12 @@ public class GraphRendererScreen {
 
     public void setZoomLevel(double zoomLevel) {
         partitionDistance = zoomLevel;
+    }
+    
+    public void zoomIn() {
+        System.out.println("Zoomin called");
+        double newDistance = layoutGenerator.zoomIn();
+        slider.setValue((float)newDistance);
     }
 
     public void redraw() {

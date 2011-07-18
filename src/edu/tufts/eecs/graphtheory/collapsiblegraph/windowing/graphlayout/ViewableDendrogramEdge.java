@@ -25,4 +25,8 @@ public class ViewableDendrogramEdge {
     public ViewableDendrogramNode getTargetNode() {
         return targetNode;
     }
+    
+    public DendrogramEdge getDendrogramEdge() {
+        return dEdge;
+    }
 }

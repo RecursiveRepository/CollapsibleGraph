@@ -12,6 +12,10 @@ import java.io.Serializable;
  */
 public class IntPairNode extends SkeletonNode implements Serializable{
     
+        
+    private final String nodeDescriptor = "Integer Node";
+    
+    
     private int xValue;
     private int yValue;
     
@@ -29,6 +33,10 @@ public class IntPairNode extends SkeletonNode implements Serializable{
         return yValue;
     }
 
+    public String getNodeDescriptor() {
+        return nodeDescriptor;
+    }
+    
     public void setXValue(int xValue) {
         this.xValue = xValue;
     }

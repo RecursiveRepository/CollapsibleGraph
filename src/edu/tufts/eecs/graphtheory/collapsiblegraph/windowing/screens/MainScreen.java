@@ -24,6 +24,7 @@ public class MainScreen {
     private ControlP5 guiController;
     private ControlWindow controlWindow;
     private Button loadGraphButton;
+    private Button buildGraphButton;
     private Button submitButton;
     private Textfield graphLocation;
 
@@ -40,6 +41,10 @@ public class MainScreen {
         loadGraphButton.setCaptionLabel("Load Pre-Processed Graph");
         loadGraphButton.hide();
        
+        buildGraphButton = guiController.addButton("buildGraph", 1, 512, 500, 140, 30);
+        buildGraphButton.setCaptionLabel("Build New Graph");
+        buildGraphButton.hide(); 
+        
         submitButton = guiController.addButton("submit", 2, 700, 300, 60, 20);
         submitButton.setCaptionLabel("Submit");
         submitButton.hide(); 
@@ -62,6 +67,7 @@ public class MainScreen {
             case INITIAL: {
                 papplet.background(0);
                 loadGraphButton.show();
+                buildGraphButton.show();
                 guiController.draw();
 
 
@@ -73,6 +79,7 @@ public class MainScreen {
             case SELECT_PREPROCESSED_GRAPH: {
                 papplet.background(0);
                 loadGraphButton.hide();
+                buildGraphButton.hide();
                 graphLocation.show();
                 graphLocation.setFocus(true);
                 submitButton.show();

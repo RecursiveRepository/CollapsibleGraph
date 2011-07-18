@@ -54,8 +54,8 @@ public class GraphPapplet extends PApplet {
             case GRAPH_RENDERER_SCREEN: {
                 currentState = graphRendererScreen.draw();
                 break;
-            }
-
+            } 
+                
         }
     }
 
@@ -63,6 +63,10 @@ public class GraphPapplet extends PApplet {
         String eventName = theEvent.controller().name();
         if (eventName.equals("loadGraph")) {
             mainScreen.loadGraph();
+        }
+        
+        if (eventName.equals("buildGraph")) {
+            currentState = ApplicationState.GRAPH_BUILDER_SCREEN;
         }
 
         if (eventName.equals("submit")) {
@@ -78,9 +82,14 @@ public class GraphPapplet extends PApplet {
         if (eventName.equals("zoomButton")) {
             graphRendererScreen.redraw();
         }
+        
+        if (eventName.equals("zoomInButton")) {
+            System.out.println("Zoom pressed.");
+            graphRendererScreen.zoomIn();
+        }
     }
 
     public static void main(String[] argv) {
-        PApplet.main(new String[]{"edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.GraphPapplet"});
+      PApplet.main(new String[]{"edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.GraphPapplet"});
     }
 }

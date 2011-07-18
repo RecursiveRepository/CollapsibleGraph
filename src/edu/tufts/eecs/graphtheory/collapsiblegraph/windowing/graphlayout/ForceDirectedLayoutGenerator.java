@@ -1,5 +1,6 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout;
 
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
  *
@@ -34,9 +36,8 @@ public class ForceDirectedLayoutGenerator {
     private float previousKineticEnergy=0;
     private int iterations = 0;
 
-     List<TemporaryLayoutNode> layoutNodes ;
-    List<ViewableDendrogramEdge> dendrogramEdges;
-    
+    List<TemporaryLayoutNode> layoutNodes ;
+        
     public List<ViewableDendrogramNode> getGraphNodes() {
         return vDNodes;
     }
@@ -55,7 +56,7 @@ public class ForceDirectedLayoutGenerator {
         DendrogramEdge[] edgeSet = ds.getVisibleDendrogramEdges();
 
         layoutNodes = new ArrayList<TemporaryLayoutNode>();
-        dendrogramEdges = new ArrayList<ViewableDendrogramEdge>();
+     
         
 
         for (DendrogramNode thisNode : nodeSet) {
@@ -70,11 +71,7 @@ public class ForceDirectedLayoutGenerator {
             vDNodes.add(newVDNode);
         }
 
-        for (DendrogramEdge thisEdge : edgeSet) {
-            ViewableDendrogramEdge newVDE = new ViewableDendrogramEdge(thisEdge, nodeToViewable.get(thisEdge.getSourceDendrogramNode()), nodeToViewable.get(thisEdge.getTargetDendrogramNode()));
-            dendrogramEdges.add(newVDE);
-        }
-        
+       
         for (DendrogramEdge dEdge : edgeSet) {
             vDEdges.add(new ViewableDendrogramEdge(dEdge, nodeToViewable.get(dEdge.getSourceDendrogramNode()),
                     nodeToViewable.get(dEdge.getTargetDendrogramNode())));
@@ -104,7 +101,7 @@ public class ForceDirectedLayoutGenerator {
                     }
                 }
                 System.out.print("  postcoloumbX:" + layoutNode.getXForce() + "  postcoloumbY: " + layoutNode.getYForce());
-                for (ViewableDendrogramEdge vDEdge : dendrogramEdges) {
+                for (ViewableDendrogramEdge vDEdge : vDEdges) {
                     calculateHookeAttraction(vDEdge);
                 }
 
@@ -132,18 +129,18 @@ public class ForceDirectedLayoutGenerator {
 
                 if (newXCoordinate == Integer.MAX_VALUE || newXCoordinate + radius > MAX_X) {
                     newXCoordinate = MAX_X - radius;
-                    xVelocity = 0;
+            //        xVelocity = 0;
                 } else if (newXCoordinate == Integer.MIN_VALUE || newXCoordinate - radius < MIN_X) {
                     newXCoordinate = MIN_X + radius;
-                    xVelocity = 0;
+              //      xVelocity = 0;
                 }
 
                 if (newYCoordinate == Integer.MAX_VALUE || newYCoordinate + radius > MAX_Y) {
                     newYCoordinate = MAX_Y - radius;
-                    yVelocity = 0;
+                //    yVelocity = 0;
                 } else if (newYCoordinate == Integer.MIN_VALUE || newYCoordinate - radius < MIN_Y) {
                     newYCoordinate = MIN_Y + radius;
-                    yVelocity = 0;
+                  //  yVelocity = 0;
                 }
 
                 layoutNode.getVDNode().setXCoordinate(newXCoordinate);
@@ -207,4 +204,79 @@ public class ForceDirectedLayoutGenerator {
         }
         return distance;
     }
+    
+    public double zoomIn() {
+        int furthestClusterIndex = findFurthestClusterIndex();
+        
+        if(furthestClusterIndex==-1) {
+            return 0d;
+        }
+        
+        ViewableDendrogramNode vdn = layoutNodes.get(furthestClusterIndex).getVDNode();
+        layoutNodes.remove(furthestClusterIndex);
+        vDNodes.remove(vdn);
+        
+        ClusterDendrogramNode cdn = (ClusterDendrogramNode)vdn.getDendrogramNode();
+        Set<DendrogramNode> theChildNodes= cdn.getChildNodes();
+        
+        DendrogramNode[] childNodes = theChildNodes.toArray(new DendrogramNode[0]);
+        
+        
+        ViewableDendrogramNode leftNode = new ViewableDendrogramNode(childNodes[0], DIAMETER, vdn.getXCoordinate()-50, vdn.getYCoordinate()-50);
+        nodeToViewable.put(childNodes[0], leftNode);
+        TemporaryLayoutNode leftLayoutNode = new TemporaryLayoutNode(leftNode);
+        leftNode.setLayoutNode(leftLayoutNode);
+        vDNodes.add(leftNode);
+        layoutNodes.add(leftLayoutNode);
+        
+        
+        ViewableDendrogramNode rightNode = new ViewableDendrogramNode(childNodes[1], DIAMETER, vdn.getXCoordinate()+50, vdn.getYCoordinate()+50);
+        nodeToViewable.put(childNodes[1], rightNode);
+        TemporaryLayoutNode rightLayoutNode = new TemporaryLayoutNode(rightNode);
+        rightNode.setLayoutNode(rightLayoutNode);
+        vDNodes.add(rightNode);
+        layoutNodes.add(rightLayoutNode);
+        
+        
+             
+        List<Integer> edgeIndicesToRemove = new ArrayList<Integer>();
+        List<ViewableDendrogramEdge> edgesToAdd = new ArrayList<ViewableDendrogramEdge>();
+        for(int i = 0 ; i < vDEdges.size(); i++) {
+            if(vDEdges.get(i).getSourceNode() == vdn || vDEdges.get(i).getTargetNode() ==vdn ) {
+                edgeIndicesToRemove.add(i);
+                for(DendrogramEdge de : vDEdges.get(i).getDendrogramEdge().getChildEdges()) {
+                    ViewableDendrogramEdge newVDE = new ViewableDendrogramEdge(de, nodeToViewable.get(de.getSourceDendrogramNode()), nodeToViewable.get(de.getTargetDendrogramNode()) );
+                    edgesToAdd.add(newVDE);
+                }
+            }
+        }
+        
+        for(int i = edgeIndicesToRemove.size()-1; i >= 0; i--) {
+            vDEdges.remove(edgeIndicesToRemove.get(i).intValue());
+        }
+        
+        vDEdges.addAll(edgesToAdd);
+        kineticEnergy=100000f;
+        
+        return cdn.getDistance();
+   
+        
+    }
+    
+    public int findFurthestClusterIndex() {
+        double furthestDistance = Double.MIN_VALUE;
+        int furthestClusterIndex = -1;
+        for(int i = 0; i < layoutNodes.size(); i++) {
+            ViewableDendrogramNode vdn = layoutNodes.get(i).getVDNode();
+            if(vdn.getDendrogramNode() instanceof ClusterDendrogramNode) {
+                if(((ClusterDendrogramNode)vdn.getDendrogramNode()).getDistance() > furthestDistance) {
+                    furthestDistance = ((ClusterDendrogramNode)vdn.getDendrogramNode()).getDistance();
+                    furthestClusterIndex = i;
+                }
+            }
+        }
+        return furthestClusterIndex;
+    }
+    
 }
+ 

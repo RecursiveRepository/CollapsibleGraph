@@ -12,8 +12,13 @@ import java.io.Serializable;
  */
 public class IntNode extends SkeletonNode implements Serializable{
     
+    private final String nodeDescriptor = "Integer Node";
+    
     private int value;
     
+    public String getNodeDescriptor() {
+        return nodeDescriptor;
+    }
     public IntNode(int value) {
         super(value+"");
         this.value=value;
