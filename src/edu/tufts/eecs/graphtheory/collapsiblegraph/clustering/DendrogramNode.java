@@ -12,5 +12,4 @@ public interface DendrogramNode {
 public Set<DendrogramNode> partitionByDistance(double partitionDistance);
 public Set<Node> getNodes();
 
-
 }

@@ -171,6 +171,9 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             newPair.add(dendrogramNodes[index1]);
             newPair.add(dendrogramNodes[index2]);
             DendrogramNode newCluster = new ClusterDendrogramNode(newPair, minDistance);
+            
+            //dendrogramNodes[index1].setParent(newCluster);
+            //dendrogramNodes[index2].setParent(newCluster);
 
             Map<DendrogramNode, DendrogramNode> oldNodeToNewNode = new HashMap<DendrogramNode, DendrogramNode>();
             oldNodeToNewNode.put(dendrogramNodes[index1], newCluster);
@@ -353,6 +356,8 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
                 }
                 
                 changes.get(previouslyCreatedEdgeIndex).getChildEdges().add(dendrogramEdges[edgeIndex]);
+     //           dendrogramEdges[edgeIndex].setParent(changes.get(previouslyCreatedEdgeIndex));
+                
                 changes.put(edgeIndex,  changes.get(previouslyCreatedEdgeIndex));
        } else {
                //There wasn't already a pre-existing edge corresponding to this one, so we'll have to make a new one
@@ -378,6 +383,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
                 newEdge.setDistance(minDistance);
                 newEdge.getChildEdges().add(dendrogramEdges[edgeIndex]);
+//                dendrogramEdges[edgeIndex].setParent(newEdge); 
                 //Add it to the list of changes to be made
                 changes.put(edgeIndex, newEdge);
 

@@ -206,7 +206,7 @@ public class ForceDirectedLayoutGenerator {
     }
     
     public double zoomIn() {
-        int furthestClusterIndex = findFurthestClusterIndex();
+        int furthestClusterIndex = findClosestChildIndex();
         
         if(furthestClusterIndex==-1) {
             return 0d;
@@ -259,11 +259,67 @@ public class ForceDirectedLayoutGenerator {
         kineticEnergy=100000f;
         
         return cdn.getDistance();
-   
-        
     }
     
-    public int findFurthestClusterIndex() {
+    
+    /*public double zoomOut() {
+        int closestParentIndex = findClosestParentIndex();
+        
+        if(closestParentIndex==-1) {
+            return 0d;
+        }
+        
+        ViewableDendrogramNode vdn = layoutNodes.get(closestParentIndex).getVDNode();
+        layoutNodes.remove(closestParentIndex);
+        vDNodes.remove(vdn);
+        
+        ClusterDendrogramNode cdn = (ClusterDendrogramNode)vdn.getDendrogramNode();
+        Set<DendrogramNode> theChildNodes= cdn.getChildNodes();
+        
+        DendrogramNode[] childNodes = theChildNodes.toArray(new DendrogramNode[0]);
+        
+        
+        ViewableDendrogramNode leftNode = new ViewableDendrogramNode(childNodes[0], DIAMETER, vdn.getXCoordinate()-50, vdn.getYCoordinate()-50);
+        nodeToViewable.put(childNodes[0], leftNode);
+        TemporaryLayoutNode leftLayoutNode = new TemporaryLayoutNode(leftNode);
+        leftNode.setLayoutNode(leftLayoutNode);
+        vDNodes.add(leftNode);
+        layoutNodes.add(leftLayoutNode);
+        
+        
+        ViewableDendrogramNode rightNode = new ViewableDendrogramNode(childNodes[1], DIAMETER, vdn.getXCoordinate()+50, vdn.getYCoordinate()+50);
+        nodeToViewable.put(childNodes[1], rightNode);
+        TemporaryLayoutNode rightLayoutNode = new TemporaryLayoutNode(rightNode);
+        rightNode.setLayoutNode(rightLayoutNode);
+        vDNodes.add(rightNode);
+        layoutNodes.add(rightLayoutNode);
+        
+        
+             
+        List<Integer> edgeIndicesToRemove = new ArrayList<Integer>();
+        List<ViewableDendrogramEdge> edgesToAdd = new ArrayList<ViewableDendrogramEdge>();
+        for(int i = 0 ; i < vDEdges.size(); i++) {
+            if(vDEdges.get(i).getSourceNode() == vdn || vDEdges.get(i).getTargetNode() ==vdn ) {
+                edgeIndicesToRemove.add(i);
+                for(DendrogramEdge de : vDEdges.get(i).getDendrogramEdge().getChildEdges()) {
+                    ViewableDendrogramEdge newVDE = new ViewableDendrogramEdge(de, nodeToViewable.get(de.getSourceDendrogramNode()), nodeToViewable.get(de.getTargetDendrogramNode()) );
+                    edgesToAdd.add(newVDE);
+                }
+            }
+        }
+        
+        for(int i = edgeIndicesToRemove.size()-1; i >= 0; i--) {
+            vDEdges.remove(edgeIndicesToRemove.get(i).intValue());
+        }
+        
+        vDEdges.addAll(edgesToAdd);
+        kineticEnergy=100000f;
+        
+        return cdn.getDistance();
+     
+    }
+    */
+    public int findClosestChildIndex() {
         double furthestDistance = Double.MIN_VALUE;
         int furthestClusterIndex = -1;
         for(int i = 0; i < layoutNodes.size(); i++) {
@@ -278,5 +334,21 @@ public class ForceDirectedLayoutGenerator {
         return furthestClusterIndex;
     }
     
+  /*  public int findClosestParentIndex() {
+        double closestDistance = Double.MAX_VALUE;
+        int closestParentIndex = -1;
+        for(int i = 0; i < layoutNodes.size(); i++) {
+            ViewableDendrogramNode vdn = layoutNodes.get(i).getVDNode(); 
+            if(vdn.getDendrogramNode().getParent() != null) {
+                ClusterDendrogramNode cdn = (ClusterDendrogramNode) vdn.getDendrogramNode().getParent();
+                if(cdn.getDistance()<closestDistance) {
+                    closestParentIndex = i;
+                    closestDistance = cdn.getDistance();
+                }
+            }
+        }
+        return closestParentIndex;
+    }
+    */
 }
  

@@ -13,6 +13,7 @@ public class DendrogramEdgeImpl implements DendrogramEdge, Serializable {
     DendrogramNode sourceNode;
     DendrogramNode targetNode;
     Set<DendrogramEdge> childEdges;
+    DendrogramEdge parent;
     double distance=0f;
     
     
@@ -69,5 +70,13 @@ public class DendrogramEdgeImpl implements DendrogramEdge, Serializable {
     @Override
     public int hashCode() {
         return sourceNode.hashCode() + targetNode.hashCode();
+    }
+    
+    public void setParent(DendrogramEdge de) {
+        parent = de;
+    }
+    
+    public DendrogramEdge getParent() {
+        return parent;
     }
 }

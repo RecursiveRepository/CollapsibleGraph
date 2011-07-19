@@ -18,11 +18,13 @@ public class ClusterDendrogramNode implements DendrogramNode, Serializable{
 
     private double distance;
     private Set<DendrogramNode> childNodes;
-
+    
+    
         public ClusterDendrogramNode(Set<DendrogramNode> childNodes, double distance) {
         this.distance = distance;
         this.childNodes = childNodes;
     }
+    
         /**
          * * 
          * @param partitionDistance
