@@ -29,4 +29,20 @@ public class ViewableDendrogramEdge {
     public DendrogramEdge getDendrogramEdge() {
         return dEdge;
     }
+    
+    @Override 
+    public boolean equals(Object o ) {
+        if(!(o instanceof ViewableDendrogramEdge)) {
+            return false;
+        }
+        if(dEdge.equals(((ViewableDendrogramEdge)o).getDendrogramEdge())) {
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return dEdge.hashCode();
+    }
 }

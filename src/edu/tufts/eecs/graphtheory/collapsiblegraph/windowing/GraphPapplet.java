@@ -87,6 +87,10 @@ public class GraphPapplet extends PApplet {
             System.out.println("Zoom pressed.");
             graphRendererScreen.zoomIn();
         }
+        if (eventName.equals("zoomOutButton")) {
+            System.out.println("Zoom pressed.");
+            graphRendererScreen.zoomOut();
+        }
     }
 
     public static void main(String[] argv) {

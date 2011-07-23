@@ -1,7 +1,3 @@
-    /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
@@ -28,6 +24,7 @@ public class SimpleIntNodeClusterTest {
 
     private int[] inputIntegers = {2, 4, 8, 16, 32};
     private int[] inputIntegers2 = {2, 4, 8, 16, 32, 64, 128};
+    private int[] inputIntegers3 = {2, 4, 8, 16};
     @Test
     public void testCluster() {
         Set<Node> inputNodes = new HashSet<Node>();
@@ -104,6 +101,33 @@ public class SimpleIntNodeClusterTest {
         DendrogramSlicer ds = new DendrogramSlicerImpl();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
         DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver3.txt");
+        
+
+        System.out.println("All done.");
+    }
+    
+     @Test
+    public void makeStupidCluster() {
+        Set<Node> inputNodes = new HashSet<Node>();
+        List<Node> inputNodeList = new ArrayList<Node>();
+
+        for (int i = 0; i < inputIntegers3.length; i++) {
+            Node newNode = new IntNode(inputIntegers3[i]);
+            inputNodes.add(newNode);
+            inputNodeList.add(newNode);
+        }
+ 
+        ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
+        Set<Edge> dendrogramEdges = new HashSet<Edge>();
+        //2->4, 2->16
+        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(1)));
+        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(2)));
+        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(3)));
+                
+        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
+        DendrogramSlicer ds = new DendrogramSlicerImpl();
+        DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
+        DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver5.txt");
         
 
         System.out.println("All done.");

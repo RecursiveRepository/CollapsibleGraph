@@ -147,6 +147,12 @@ public class GraphRendererScreen {
         double newDistance = layoutGenerator.zoomIn();
         slider.setValue((float)newDistance);
     }
+    
+    public void zoomOut() {
+        System.out.println("Zoomout called");
+        double newDistance = layoutGenerator.zoomOut();
+        slider.setValue((float)newDistance);
+    }
 
     public void redraw() {
         DendrogramSlice currentSlice = dendrogramSlicer.partitionByDistance(partitionDistance, dendrogram);

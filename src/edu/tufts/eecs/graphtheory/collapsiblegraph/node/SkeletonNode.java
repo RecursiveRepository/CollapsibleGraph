@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.tufts.eecs.graphtheory.collapsiblegraph.node;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;

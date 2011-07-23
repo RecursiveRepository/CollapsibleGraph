@@ -6,6 +6,7 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.Set;
 public class LeafDendrogramNode implements DendrogramNode, Serializable {
 
     private Node dataNode;
+    private DendrogramNode parentNode;
   
     public LeafDendrogramNode(Node dataNode) {
         this.dataNode = dataNode;
@@ -41,4 +43,16 @@ public class LeafDendrogramNode implements DendrogramNode, Serializable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public DendrogramNode getParent() {
+        return parentNode;
+    }
+    
+    public void setParent(DendrogramNode parentNode) {
+        this.parentNode = parentNode;
+    }
+    
+    public void readObjectNoData() throws InvalidObjectException {
+        throw new InvalidObjectException("Stream data required");
+    }
 }

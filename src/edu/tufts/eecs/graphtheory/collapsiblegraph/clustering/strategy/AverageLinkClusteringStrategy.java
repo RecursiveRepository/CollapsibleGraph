@@ -6,7 +6,6 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A ClusteringStrategy using the Complete Link method of clustering,

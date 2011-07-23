@@ -1,8 +1,8 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -12,7 +12,7 @@ public class DendrogramEdgeImpl implements DendrogramEdge, Serializable {
 
     DendrogramNode sourceNode;
     DendrogramNode targetNode;
-    Set<DendrogramEdge> childEdges;
+    List<DendrogramEdge> childEdges;
     DendrogramEdge parent;
     double distance=0f;
     
@@ -26,11 +26,11 @@ public class DendrogramEdgeImpl implements DendrogramEdge, Serializable {
         return targetNode;
     }
 
-    public Set<DendrogramEdge> getChildEdges() {
+    public List<DendrogramEdge> getChildEdges() {
         return childEdges;
     }
     
-    public void setChildEdges(Set<DendrogramEdge> childEdges) {
+    public void setChildEdges(List<DendrogramEdge> childEdges) {
         this.childEdges = childEdges;
     }
     
@@ -41,7 +41,7 @@ public class DendrogramEdgeImpl implements DendrogramEdge, Serializable {
     public DendrogramEdgeImpl(DendrogramNode sourceNode, DendrogramNode targetNode) {
         this.sourceNode = sourceNode;
         this.targetNode = targetNode;
-        childEdges = new HashSet<DendrogramEdge>();
+        childEdges = new ArrayList<DendrogramEdge>();
     }
 
     public double getDistance() {
@@ -72,10 +72,11 @@ public class DendrogramEdgeImpl implements DendrogramEdge, Serializable {
         return sourceNode.hashCode() + targetNode.hashCode();
     }
     
+    @Override
     public void setParent(DendrogramEdge de) {
         parent = de;
     }
-    
+    @Override
     public DendrogramEdge getParent() {
         return parent;
     }

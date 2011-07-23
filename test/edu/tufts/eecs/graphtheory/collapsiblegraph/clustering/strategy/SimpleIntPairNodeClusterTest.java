@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
@@ -26,7 +21,7 @@ import org.junit.Test;
  */
 public class SimpleIntPairNodeClusterTest {
 
-    int inputList[][] = {{1,1}, {2,1}, {4,4}};
+    int inputList[][] = {{1,1}, {2,1}, {4,4}, {10,1}, {3,3}};
 
      @Test
     public void testThirdCluster() {
@@ -43,8 +38,8 @@ public class SimpleIntPairNodeClusterTest {
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         Set<Edge> dendrogramEdges = new HashSet<Edge>();
         //2->4, 2->16
-        //dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(3)));
-                dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(2)));
+        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(3)));
+        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(2)));
         dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(1)));
         //        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(4)));
           //      dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(4), inputNodeList.get(5)));

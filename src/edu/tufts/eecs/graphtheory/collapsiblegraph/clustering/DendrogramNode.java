@@ -7,9 +7,11 @@ import java.util.Set;
  *
  * @author Jeremy
  */
-public interface DendrogramNode {
+public interface DendrogramNode{
 
 public Set<DendrogramNode> partitionByDistance(double partitionDistance);
 public Set<Node> getNodes();
+public DendrogramNode getParent();
+public void setParent(DendrogramNode parentNode);
 
 }

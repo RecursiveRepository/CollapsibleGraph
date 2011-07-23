@@ -4,7 +4,7 @@
  */
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  *
@@ -16,7 +16,14 @@ public interface DendrogramEdge {
     public DendrogramNode getTargetDendrogramNode();
     public void setDistance(double distance);
     public double getDistance();
-    public Set<DendrogramEdge> getChildEdges();
-
+    public List<DendrogramEdge> getChildEdges();
+    public DendrogramEdge getParent();
+    public void setParent(DendrogramEdge de);
+    
+    @Override
+    public int hashCode();
+    @Override
+    public boolean equals(Object o);
+    
     
 }

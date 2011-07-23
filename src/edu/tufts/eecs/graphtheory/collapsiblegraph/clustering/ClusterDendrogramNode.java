@@ -6,8 +6,11 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import java.io.InvalidObjectException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,12 +20,14 @@ import java.util.Set;
 public class ClusterDendrogramNode implements DendrogramNode, Serializable{
 
     private double distance;
-    private Set<DendrogramNode> childNodes;
+    private List<DendrogramNode> childNodes;
+    private DendrogramNode parentNode;
     
     
-        public ClusterDendrogramNode(Set<DendrogramNode> childNodes, double distance) {
+        public ClusterDendrogramNode(Set<DendrogramNode> childNodes, double distance, DendrogramNode parentNode) {
         this.distance = distance;
-        this.childNodes = childNodes;
+        this.childNodes = new ArrayList<DendrogramNode>(childNodes);
+        this.parentNode = parentNode;
     }
     
         /**
@@ -57,7 +62,7 @@ public class ClusterDendrogramNode implements DendrogramNode, Serializable{
         return distance;
     }
     
-    public Set<DendrogramNode> getChildNodes() {
+    public List<DendrogramNode> getChildNodes() {
         return childNodes;
     }
     
@@ -87,5 +92,17 @@ public class ClusterDendrogramNode implements DendrogramNode, Serializable{
         }
         Long sumObject = new Long(sum);
         return sumObject.hashCode();
+    }
+
+    public DendrogramNode getParent() {
+        return parentNode;
+    }
+
+    public void setParent(DendrogramNode parentNode) {
+        this.parentNode = parentNode;
+    }
+    
+        public void readObjectNoData() throws InvalidObjectException {
+        throw new InvalidObjectException("Stream data required");
     }
 }
