@@ -5,10 +5,10 @@
 
 package edu.tufts.eecs.graphtheory.collapsiblegraph;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.SkeletonEdge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.SkeletonNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.GraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.SkeletonGraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.SkeletonGraphNode;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
@@ -25,10 +25,10 @@ public class FileBasedGraphBuilder {
     public static CollapsibleGraph buildGraphFromFileName(String fileName) throws Exception {
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         
-        Set<Edge> edgeSet = new HashSet<Edge>();
-        Set<Node> nodeSet = new HashSet<Node>();
+        Set<GraphEdge> edgeSet = new HashSet<GraphEdge>();
+        Set<GraphNode> nodeSet = new HashSet<GraphNode>();
 
-        Map<String, Node> nodeNameMap = new HashMap<String, Node>();
+        Map<String, GraphNode> nodeNameMap = new HashMap<String, GraphNode>();
 
         String line = null;
         int linesRead = 0;
@@ -39,7 +39,7 @@ public class FileBasedGraphBuilder {
                     System.err.println("Duplicate node name " + pieces[0] + " at line " + linesRead + "." );
                     throw new Exception();
                 }
-                Node newNode = new SkeletonNode(pieces[0]);
+                GraphNode newNode = new SkeletonGraphNode(pieces[0]);
                 nodeNameMap.put(pieces[0], newNode);
                 nodeSet.add(newNode);
             } else if(pieces.length==2) {
@@ -52,7 +52,7 @@ public class FileBasedGraphBuilder {
                      throw new Exception();
                  }
 
-                 edgeSet.add(new SkeletonEdge(nodeNameMap.get(pieces[0]), nodeNameMap.get(pieces[1])));
+                 edgeSet.add(new SkeletonGraphEdge(nodeNameMap.get(pieces[0]), nodeNameMap.get(pieces[1])));
 
             }
             linesRead++;

@@ -1,8 +1,8 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntNode;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.IntGraphNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -21,9 +21,9 @@ public class SimpleIntNodeClusterLoadTest {
     
     @Test
     public void testCluster() {
-        Set<Node> inputNodes = new HashSet<Node>();
+        Set<GraphNode> inputNodes = new HashSet<GraphNode>();
         for (int i = 0; i < NUMBER_OF_NODES; i++) {
-            inputNodes.add(new IntNode(generator.nextInt(Integer.MAX_VALUE)));
+            inputNodes.add(new IntGraphNode(generator.nextInt(Integer.MAX_VALUE)));
         }
    //     ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
      //   DendrogramNode root = singleLinkStrategy.cluster(inputNodes);

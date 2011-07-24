@@ -1,10 +1,10 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.SkeletonEdge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntPairNode;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.GraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.SkeletonGraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.IntPairGraphNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.persistance.DendrogramSaver;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
@@ -26,23 +26,23 @@ public class SimpleIntPairNodeClusterTest {
      @Test
     public void testThirdCluster() {
 
-        Set<Node> inputNodes = new HashSet<Node>();
-        List<Node> inputNodeList = new ArrayList<Node>();
+        Set<GraphNode> inputNodes = new HashSet<GraphNode>();
+        List<GraphNode> inputNodeList = new ArrayList<GraphNode>();
 
         for (int i = 0; i < inputList.length; i++) {
-            Node newNode = new IntPairNode(inputList[i][0], inputList[i][1]);
+            GraphNode newNode = new IntPairGraphNode(inputList[i][0], inputList[i][1]);
             inputNodes.add(newNode);
             inputNodeList.add(newNode);
         }
 
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
-        Set<Edge> dendrogramEdges = new HashSet<Edge>();
+        Set<GraphEdge> dendrogramEdges = new HashSet<GraphEdge>();
         //2->4, 2->16
-        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(3)));
-        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(2)));
-        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(1)));
-        //        dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(0), inputNodeList.get(4)));
-          //      dendrogramEdges.add(new SkeletonEdge(inputNodeList.get(4), inputNodeList.get(5)));
+        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(3)));
+        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
+        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(1)));
+        //        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(4)));
+          //      dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(4), inputNodeList.get(5)));
         Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicerImpl();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);

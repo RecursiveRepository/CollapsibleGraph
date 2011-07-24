@@ -5,8 +5,8 @@
 
 package edu.tufts.eecs.graphtheory.collapsiblegraph;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.GraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,30 +16,30 @@ import java.util.Set;
  */
 public class SimpleCollapsibleGraph implements CollapsibleGraph {
 
-private Set<Node> nodeSet;
-private Set<Edge> edgeSet;
-private Map<String, Node> nodeNameMap;
+private Set<GraphNode> nodeSet;
+private Set<GraphEdge> edgeSet;
+private Map<String, GraphNode> nodeNameMap;
 
-    public Set<Node> getNodes() {
+    public Set<GraphNode> getNodes() {
         return nodeSet;
     }
 
-    public Set<Edge> getEdges() {
+    public Set<GraphEdge> getEdges() {
         return edgeSet;
     }
 
-    public SimpleCollapsibleGraph(Set<Node> nodes, Set<Edge> edges) {
+    public SimpleCollapsibleGraph(Set<GraphNode> nodes, Set<GraphEdge> edges) {
         this.nodeSet = nodes;
         this.edgeSet = edges;
     }
 
-    public SimpleCollapsibleGraph(Set<Node> nodeSet, Set<Edge> edgeSet, Map<String, Node> nodeNameMap) {
+    public SimpleCollapsibleGraph(Set<GraphNode> nodeSet, Set<GraphEdge> edgeSet, Map<String, GraphNode> nodeNameMap) {
         this.nodeSet = nodeSet;
         this.edgeSet = edgeSet;
         this.nodeNameMap = nodeNameMap;
     }
 
-    public Map<String, Node> getNodeNameMap() {
+    public Map<String, GraphNode> getNodeNameMap() {
         return nodeNameMap;
     }
 }

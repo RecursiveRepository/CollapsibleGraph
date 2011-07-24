@@ -3,11 +3,11 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdgeImpl;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.LeafDendrogramNode;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.GraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
      * @param graphNodes The set of logical nodes that should be arranged into a dendrogram.
      * @return DendrogramNode that is the root of the Dendrogram created by clustering
      */
-    public final Dendrogram cluster(final Set<Node> graphNodes, final Set<Edge> graphEdges) {
+    public final Dendrogram cluster(final Set<GraphNode> graphNodes, final Set<GraphEdge> graphEdges) {
 
         ExecutorService distanceExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
         long startTime = System.currentTimeMillis();
@@ -68,24 +68,24 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         //List holding the "topmost" clusters as an optimization. *Co-indexed with dendrogramNodes.*
         //By maintaining a List of Arrays of Nodes corresponding to the array of dendrogramNodes, we are able to 
         //instantly retrieve the set of nodes that is contained in the tree that a given dendrogramNode is the root of, inclusive. 
-        List<Node[]> topClusterList = new ArrayList<Node[]>(graphNodes.size());
+        List<GraphNode[]> topClusterList = new ArrayList<GraphNode[]>(graphNodes.size());
         //Array holding the index of each dendrogramNode's nearest Neighbor. *Co-indexed with dendrogramNodes*
         int[] nearestNeighborIndices = new int[graphNodes.size()];
         //Array holding the distance to each dendrogramNode's nearest Neighbor. *Co-indexed with dendrogramNodes*
         double[] nearestNeighborDistances = new double[graphNodes.size()];
 
 
-        Map<Node, Integer> nodeToDendrogramNodeMap = new HashMap<Node, Integer>();
+        Map<GraphNode, Integer> nodeToDendrogramNodeMap = new HashMap<GraphNode, Integer>();
 
         //This loop turns the set of Nodes from the input into a set of singleton DendrogramNodes
         int index = 0;
-        for (Node collapsibleGraphNode : graphNodes) {
-            //Create the DendrogramLeafNode to hold this Node
+        for (GraphNode collapsibleGraphNode : graphNodes) {
+            //Create the DendrogramLeafNode to hold this GraphNode
             DendrogramNode newDNode = new LeafDendrogramNode(collapsibleGraphNode);
 
             nodeToDendrogramNodeMap.put(collapsibleGraphNode, index);
             //As these new Dendrograms are top-level, they must have nodes for topLevelClusters
-            Node[] singletonClusterSet = new Node[1];
+            GraphNode[] singletonClusterSet = new GraphNode[1];
             singletonClusterSet[0] = collapsibleGraphNode;
             topClusterList.add(singletonClusterSet);
 
@@ -96,10 +96,10 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
         DendrogramEdge[] dEdges = new DendrogramEdge[graphEdges.size()];
         int edgeIndex = 0;
-        for (Edge graphEdge : graphEdges) {
+        for (GraphEdge graphEdge : graphEdges) {
             DendrogramNode sourceDNode = dendrogramNodes[nodeToDendrogramNodeMap.get(graphEdge.getSource())];
             DendrogramNode targetDNode = dendrogramNodes[nodeToDendrogramNodeMap.get(graphEdge.getTarget())];
-            DendrogramEdge newEdge = new DendrogramEdgeImpl(sourceDNode, targetDNode);
+            DendrogramEdge newEdge = new DendrogramEdge(sourceDNode, targetDNode);
             dEdges[edgeIndex] = newEdge;
             dendrogramEdges[edgeIndex] = newEdge;
 
@@ -172,8 +172,8 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             newPair.add(dendrogramNodes[index2]);
             DendrogramNode newCluster = new ClusterDendrogramNode(newPair, minDistance, null);
 
-            dendrogramNodes[index1].setParent(newCluster);
-            dendrogramNodes[index2].setParent(newCluster);
+            dendrogramNodes[index1].setParentDNode(newCluster);
+            dendrogramNodes[index2].setParentDNode(newCluster);
 
             Map<DendrogramNode, DendrogramNode> oldNodeToNewNode = new HashMap<DendrogramNode, DendrogramNode>();
             oldNodeToNewNode.put(dendrogramNodes[index1], newCluster);
@@ -217,7 +217,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
             }
 
             //Combine the two sets of Nodes to update the topClusterList
-            Node[] newArray = new Node[topClusterList.get(index1).length + topClusterList.get(index2).length];
+            GraphNode[] newArray = new GraphNode[topClusterList.get(index1).length + topClusterList.get(index2).length];
             System.arraycopy(topClusterList.get(index1), 0, newArray, 0, topClusterList.get(index1).length);
             System.arraycopy(topClusterList.get(index2), 0, newArray, topClusterList.get(index1).length, topClusterList.get(index2).length);
             topClusterList.set(index1, newArray);
@@ -275,7 +275,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
      * @return a double representing the distance between the two clusters
      */
     protected abstract double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
-            List<Node[]> currentClusters);
+            List<GraphNode[]> currentClusters);
 
     /*
      * An inner class to hold the results of a closest-neighbor search
@@ -312,10 +312,10 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
         int minIndexToCheck;
         int maxIndexToCheck;
         DendrogramNode[] dendrogramNodes;
-        List<Node[]> topClusterList;
+        List<GraphNode[]> topClusterList;
         Set<Integer> indicesToCheck;
 
-        public MinimumDistanceTask(int minIndexToCheck, int maxIndexToCheck, DendrogramNode[] dendrogramNodes, List<Node[]> topClusterList,
+        public MinimumDistanceTask(int minIndexToCheck, int maxIndexToCheck, DendrogramNode[] dendrogramNodes, List<GraphNode[]> topClusterList,
                 Set<Integer> indicesToCheck) {
             this.minIndexToCheck = minIndexToCheck;
             this.maxIndexToCheck = maxIndexToCheck;
@@ -369,7 +369,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
                 }
 
                 changes.get(previouslyCreatedEdgeIndex).getChildEdges().add(dendrogramEdges[edgeIndex]);
-                dendrogramEdges[edgeIndex].setParent(changes.get(previouslyCreatedEdgeIndex));
+                dendrogramEdges[edgeIndex].setParentDEdge(changes.get(previouslyCreatedEdgeIndex));
 
                 changes.put(edgeIndex, changes.get(previouslyCreatedEdgeIndex));
             } else {
@@ -392,11 +392,11 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
                 }
 
                 //Create the new edge
-                DendrogramEdge newEdge = new DendrogramEdgeImpl(sourceNode, targetNode);;
+                DendrogramEdge newEdge = new DendrogramEdge(sourceNode, targetNode);;
 
                 newEdge.setDistance(minDistance);
                 newEdge.getChildEdges().add(dendrogramEdges[edgeIndex]);
-                dendrogramEdges[edgeIndex].setParent(newEdge); 
+                dendrogramEdges[edgeIndex].setParentDEdge(newEdge); 
                 //Add it to the list of changes to be made
                 changes.put(edgeIndex, newEdge);
 

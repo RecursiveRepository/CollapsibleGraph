@@ -7,7 +7,6 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.viewing;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdgeImpl;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.LeafDendrogramNode;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class DendrogramSlicerImpl implements DendrogramSlicer {
             } else {
                 ClusterDendrogramNode thisCluster = (ClusterDendrogramNode) nodeToCheck;
                 if (thisCluster.getDistance() > distance) {
-                    nodesToCheck.addAll(thisCluster.getChildNodes());
+                    nodesToCheck.addAll(thisCluster.getChildDNodes());
                 } else {
                     dendrogramNodes.add(nodeToCheck);
                 }

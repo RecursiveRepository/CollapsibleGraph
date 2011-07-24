@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.tufts.eecs.graphtheory.collapsiblegraph.node;
+package edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author Jeremy
  */
-public class IntPairNode extends SkeletonNode implements Serializable{
+public class IntPairGraphNode extends SkeletonGraphNode implements Serializable{
     
         
     private final String nodeDescriptor = "Integer Node";
@@ -19,7 +19,7 @@ public class IntPairNode extends SkeletonNode implements Serializable{
     private int xValue;
     private int yValue;
     
-    public IntPairNode(int xValue, int yValue) {
+    public IntPairGraphNode(int xValue, int yValue) {
         super("(" + xValue + "," + yValue + ")");
         this.xValue=xValue;
         this.yValue=yValue;
@@ -45,12 +45,12 @@ public class IntPairNode extends SkeletonNode implements Serializable{
         this.yValue = yValue;
     }
 
-    public double getDistance(Node otherIntPairNode) {
-     if(!(otherIntPairNode instanceof IntPairNode)) {
+    public double getDistance(GraphNode otherIntPairNode) {
+     if(!(otherIntPairNode instanceof IntPairGraphNode)) {
          throw new RuntimeException("It appears you're trying to compare IntPairNodes with non-IntPairNodes.");
      }
 
-     IntPairNode otherINode = (IntPairNode) otherIntPairNode;
+     IntPairGraphNode otherINode = (IntPairGraphNode) otherIntPairNode;
      return Math.sqrt(Math.pow((this.getXValue() - otherINode.getXValue()),2) + Math.pow((this.getYValue() - otherINode.getYValue()),2));
     }
     

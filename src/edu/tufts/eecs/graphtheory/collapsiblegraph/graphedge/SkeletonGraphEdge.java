@@ -3,41 +3,41 @@
  * and open the template in the editor.
  */
 
-package edu.tufts.eecs.graphtheory.collapsiblegraph.edge;
+package edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 
 /**
  *
  * @author Jeremy
  */
-public class SkeletonEdge implements Edge {
+public class SkeletonGraphEdge implements GraphEdge {
 
-    private Node sourceNode;
-    private Node targetNode;
+    private GraphNode sourceNode;
+    private GraphNode targetNode;
     private int hashCode;
 
-    public SkeletonEdge(Node sourceNode, Node targetNode) {
+    public SkeletonGraphEdge(GraphNode sourceNode, GraphNode targetNode) {
         this.sourceNode = sourceNode;
         this.targetNode = targetNode;
         generateHashCode();
     }
 
-    public void setSource(Node sourceNode) {
+    public void setSource(GraphNode sourceNode) {
         this.sourceNode=sourceNode;
         generateHashCode();
     }
 
-    public void setTarget(Node targetNode) {
+    public void setTarget(GraphNode targetNode) {
         this.targetNode=targetNode;
         generateHashCode();
     }
 
-    public Node getSource() {
+    public GraphNode getSource() {
         return sourceNode;
     }
 
-    public Node getTarget() {
+    public GraphNode getTarget() {
         return targetNode;
     }
 
@@ -58,7 +58,7 @@ public class SkeletonEdge implements Edge {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SkeletonEdge other = (SkeletonEdge) obj;
+        final SkeletonGraphEdge other = (SkeletonGraphEdge) obj;
         if (this.sourceNode != other.sourceNode && (this.sourceNode == null || !this.sourceNode.equals(other.sourceNode))) {
             return false;
         }

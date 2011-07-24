@@ -6,8 +6,8 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.GraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import java.util.Set;
 
 /**
@@ -16,6 +16,6 @@ import java.util.Set;
  */
 public interface ClusteringStrategy {
 
-public Dendrogram cluster(Set<Node> theNodes, Set<Edge> theEdges);
+public Dendrogram cluster(Set<GraphNode> theNodes, Set<GraphEdge> theEdges);
 
 }

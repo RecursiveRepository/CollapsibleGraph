@@ -4,10 +4,10 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.ClusteringStrategy;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.SingleLinkClusteringStrategy;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.SkeletonEdge;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.IntNode;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.GraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.SkeletonGraphEdge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.IntGraphNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ public class Main {
         System.out.println("Successfully initialized graph with " + cg.getNodes().size() + " nodes.");
         double maxDistance = 0;
         long comparisonsDone = 0;
-        for (Node node : cg.getNodes()) {
-            for (Node otherNode : cg.getNodes()) {
+        for (GraphNode node : cg.getNodes()) {
+            for (GraphNode otherNode : cg.getNodes()) {
                 if (!node.equals(otherNode)) {
                     double distance = node.getDistance(otherNode);
                     comparisonsDone++;
@@ -59,18 +59,18 @@ public class Main {
     
     public static void main(String[] argv) {
         
-        List<Node> inputNodesList = new ArrayList<Node>();
-        Set<Node> inputNodes = new HashSet<Node>();
+        List<GraphNode> inputNodesList = new ArrayList<GraphNode>();
+        Set<GraphNode> inputNodes = new HashSet<GraphNode>();
         for (int i = 0; i < NUMBER_OF_NODES; i++) {
-            Node newNode = new IntNode(generator.nextInt(Integer.MAX_VALUE));
+            GraphNode newNode = new IntGraphNode(generator.nextInt(Integer.MAX_VALUE));
             inputNodes.add(newNode);
             inputNodesList.add(newNode);
         }
         
         
-        Set<Edge> inputEdges = new HashSet<Edge>();
+        Set<GraphEdge> inputEdges = new HashSet<GraphEdge>();
         for(int i = 0; i < NUMBER_OF_NODES; i++) {
-                inputEdges.add(new SkeletonEdge(inputNodesList.get(generator.nextInt(NUMBER_OF_NODES-1)),
+                inputEdges.add(new SkeletonGraphEdge(inputNodesList.get(generator.nextInt(NUMBER_OF_NODES-1)),
                         inputNodesList.get(generator.nextInt(NUMBER_OF_NODES-1))));
         }
         
@@ -79,18 +79,15 @@ public class Main {
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, inputEdges);
         DendrogramNode root = dendrogram.getRootNode();
-        
-        long startTime = System.currentTimeMillis();
-        Set<DendrogramNode> clusters = root.partitionByDistance(1.0);
-        long endTime = System.currentTimeMillis(); 
+       
         DendrogramSlicer ds = new DendrogramSlicerImpl();
-        System.out.println("Cut to 1 partition in " + (endTime - startTime) + "milliseconds");
+       
         
         for(int i = 1; i < 10000000; i= i * 10) {
         
-        startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         ds.partitionByDistance(i, dendrogram);
-        endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
         System.out.println("Cut to " + i + " partition in " + (endTime - startTime) + "milliseconds");
         }
                 

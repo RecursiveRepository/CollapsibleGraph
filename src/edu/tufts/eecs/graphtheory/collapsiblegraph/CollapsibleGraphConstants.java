@@ -6,5 +6,5 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph;
  */
 public class CollapsibleGraphConstants {
     
-    public static final String VERSION_NUMBER = "0.1";
+    public static final String VERSION_NUMBER = "0.3";
 }

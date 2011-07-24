@@ -5,7 +5,7 @@ import controlP5.ControlP5;
 import controlP5.Slider;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
@@ -39,7 +39,7 @@ public class GraphRendererScreen {
     private List<ViewableDendrogramNode> viewableDNodes;
     private boolean recentlyRendered = false;
     private ViewableDendrogramNode selectedNode;
-    private Set<Node> selectedDataNodes;
+    private List<GraphNode> selectedDataNodes;
     private ForceDirectedLayoutGenerator layoutGenerator = new ForceDirectedLayoutGenerator();
 
     private GraphRendererScreen(PApplet papplet, ControlP5 guiController) {
@@ -101,7 +101,7 @@ public class GraphRendererScreen {
             if (papplet.mousePressed) {
                 if (Math.pow((papplet.mouseX - viewableNode.getXCoordinate()), 2) + Math.pow((papplet.mouseY - viewableNode.getYCoordinate()), 2) < Math.pow(25, 2)) {
                     selectedNode = viewableNode;
-                    selectedDataNodes = viewableNode.getDendrogramNode().getNodes();
+                    selectedDataNodes = viewableNode.getDendrogramNode().getGraphNodes();
                 }
             }
             
@@ -123,7 +123,7 @@ public class GraphRendererScreen {
         
         if(selectedDataNodes!=null && !selectedDataNodes.isEmpty()) {
         String nodes = "";
-        for(Node selectedDataNode : selectedDataNodes) {
+        for(GraphNode selectedDataNode : selectedDataNodes) {
             nodes = nodes + selectedDataNode.toString() + ",";
         }
         papplet.fill(0, 0, 255);

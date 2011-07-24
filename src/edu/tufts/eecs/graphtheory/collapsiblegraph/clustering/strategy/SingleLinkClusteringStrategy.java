@@ -1,6 +1,6 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import java.util.List;
 
 /**
@@ -11,15 +11,15 @@ import java.util.List;
  */
 public class SingleLinkClusteringStrategy extends AbstractClusteringStrategy {
     
-    private final static Node[] nodeArray = new Node[0];
+    private final static GraphNode[] nodeArray = new GraphNode[0];
        @Override    
         protected double findDistance(int firstDendrogramNodeIndex, int secondDendrogramNodeIndex,
-            List<Node[]> currentClusters) {
+            List<GraphNode[]> currentClusters) {
 
         
         double minimumDistance = Double.MAX_VALUE;
-        Node[] firstDendrogramNodes = currentClusters.get(firstDendrogramNodeIndex);
-        Node[] secondDendrogramNodes = currentClusters.get(secondDendrogramNodeIndex);
+        GraphNode[] firstDendrogramNodes = currentClusters.get(firstDendrogramNodeIndex);
+        GraphNode[] secondDendrogramNodes = currentClusters.get(secondDendrogramNodeIndex);
         for (int i = 0; i < firstDendrogramNodes.length; i++) {
              
             for (int j = 0; j < secondDendrogramNodes.length; j++) {

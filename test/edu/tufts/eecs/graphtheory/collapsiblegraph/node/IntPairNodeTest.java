@@ -1,5 +1,7 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.node;
 
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.IntPairGraphNode;
 import org.junit.Test;
 
 
@@ -12,8 +14,8 @@ public class IntPairNodeTest {
 
     @Test
     public void testDistance() {
-        Node intPairNode = new IntPairNode(-2, -3);
-        Node secondIntPairNode = new IntPairNode(-4, 4);
+        GraphNode intPairNode = new IntPairGraphNode(-2, -3);
+        GraphNode secondIntPairNode = new IntPairGraphNode(-4, 4);
         System.out.println(intPairNode.getDistance(secondIntPairNode));
     }
 }

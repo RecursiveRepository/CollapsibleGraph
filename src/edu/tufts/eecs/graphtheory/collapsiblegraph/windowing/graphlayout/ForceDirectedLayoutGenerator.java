@@ -36,6 +36,7 @@ public class ForceDirectedLayoutGenerator {
     private float previousKineticEnergy = 0;
     private int iterations = 0;
     List<TemporaryLayoutNode> layoutNodes;
+    private static final boolean debug = false;
 
     public List<ViewableDendrogramNode> getGraphNodes() {
         return vDNodes;
@@ -82,25 +83,25 @@ public class ForceDirectedLayoutGenerator {
     }
 
     public void iterate() {
-        if (kineticEnergy < 10f) {
+        if (kineticEnergy < 20f) {
             return;
         }
         previousKineticEnergy = kineticEnergy;
         kineticEnergy = 0f;
-        System.out.println("Iteration " + iterations);
+        if(debug) System.out.println("Iteration " + iterations);
         int node = 0;
         for (TemporaryLayoutNode layoutNode : layoutNodes) {
-            System.out.print(" node: " + node + "  ");
+            if(debug) System.out.print(" node: " + node + "  ");
             layoutNode.setXForce(0F);
             layoutNode.setYForce(0F);
-            System.out.print(" x:" + layoutNode.getVDNode().getXCoordinate() + "  y:" + layoutNode.getVDNode().getYCoordinate());
+            if(debug) System.out.print(" x:" + layoutNode.getVDNode().getXCoordinate() + "  y:" + layoutNode.getVDNode().getYCoordinate());
             for (TemporaryLayoutNode otherLayoutNode : layoutNodes) {
                 if (layoutNode != otherLayoutNode) {
                     calculateColoumbRepulsion(layoutNode, otherLayoutNode);
 
                 }
             }
-            System.out.print("  postcoloumbX:" + layoutNode.getXForce() + "  postcoloumbY: " + layoutNode.getYForce());
+            if(debug) System.out.print("  postcoloumbX:" + layoutNode.getXForce() + "  postcoloumbY: " + layoutNode.getYForce());
             for (ViewableDendrogramEdge vDEdge : vDEdges) {
                 calculateHookeAttraction(vDEdge);
             }
@@ -108,8 +109,8 @@ public class ForceDirectedLayoutGenerator {
 
             layoutNode.setXVelocity(VELOCITY_MODIFIER * (layoutNode.getXVelocity() * MOMENTUM_DAMPENING_CONSTANT + layoutNode.getXForce()));
             layoutNode.setYVelocity(VELOCITY_MODIFIER * (layoutNode.getYVelocity() * MOMENTUM_DAMPENING_CONSTANT + layoutNode.getYForce()));
-            System.out.print("  postHookeX: " + layoutNode.getXForce() + "  postHookeY:" + layoutNode.getYForce());
-            System.out.print(" XVel: " + layoutNode.getXVelocity() + " YVel: " + layoutNode.getYVelocity() + "\n");
+            if(debug) System.out.print("  postHookeX: " + layoutNode.getXForce() + "  postHookeY:" + layoutNode.getYForce());
+            if(debug) System.out.print(" XVel: " + layoutNode.getXVelocity() + " YVel: " + layoutNode.getYVelocity() + "\n");
 
             node++;
         }
@@ -129,18 +130,18 @@ public class ForceDirectedLayoutGenerator {
 
             if (newXCoordinate == Integer.MAX_VALUE || newXCoordinate + radius > MAX_X) {
                 newXCoordinate = MAX_X - radius;
-                //        xVelocity = 0;
+               
             } else if (newXCoordinate == Integer.MIN_VALUE || newXCoordinate - radius < MIN_X) {
                 newXCoordinate = MIN_X + radius;
-                //      xVelocity = 0;
+               
             }
 
             if (newYCoordinate == Integer.MAX_VALUE || newYCoordinate + radius > MAX_Y) {
                 newYCoordinate = MAX_Y - radius;
-                //    yVelocity = 0;
+               
             } else if (newYCoordinate == Integer.MIN_VALUE || newYCoordinate - radius < MIN_Y) {
                 newYCoordinate = MIN_Y + radius;
-                //  yVelocity = 0;
+               
             }
 
             layoutNode.getVDNode().setXCoordinate(newXCoordinate);
@@ -217,7 +218,7 @@ public class ForceDirectedLayoutGenerator {
         vDNodes.remove(vdn);
 
         ClusterDendrogramNode cdn = (ClusterDendrogramNode) vdn.getDendrogramNode();
-        List<DendrogramNode> theChildNodes = cdn.getChildNodes();
+        List<DendrogramNode> theChildNodes = cdn.getChildDNodes();
 
         DendrogramNode[] childNodes = theChildNodes.toArray(new DendrogramNode[0]);
 
@@ -287,7 +288,7 @@ public class ForceDirectedLayoutGenerator {
         int newXCoord = xCoordSum / childNodes.size();
         int newYCoord = yCoordSum / childNodes.size();
 
-        ViewableDendrogramNode newParent = new ViewableDendrogramNode(childNodes.get(0).getDendrogramNode().getParent(), DIAMETER, newXCoord, newYCoord);
+        ViewableDendrogramNode newParent = new ViewableDendrogramNode(childNodes.get(0).getDendrogramNode().getParentDNode(), DIAMETER, newXCoord, newYCoord);
         nodeToViewable.put(newParent.getDendrogramNode(), newParent);
         TemporaryLayoutNode newParentNode = new TemporaryLayoutNode(newParent);
         newParent.setLayoutNode(newParentNode);
@@ -299,20 +300,20 @@ public class ForceDirectedLayoutGenerator {
 
 
         List<Integer> edgeIndicesToRemove = new ArrayList<Integer>();
-         List<ViewableDendrogramEdge> edgesToAdd = new ArrayList<ViewableDendrogramEdge>();
+        List<ViewableDendrogramEdge> edgesToAdd = new ArrayList<ViewableDendrogramEdge>();
         Set<DendrogramEdge> parentEdges = new HashSet<DendrogramEdge>();
 
-INDEXSPOT:for (int i = 0; i < vDEdges.size(); i++) {
+        for (int i = 0; i < vDEdges.size(); i++) {
             for (ViewableDendrogramNode childNode : childNodes) {
                 if (vDEdges.get(i).getSourceNode() == childNode || vDEdges.get(i).getTargetNode() == childNode) {
-                    if (!parentEdges.contains(vDEdges.get(i).getDendrogramEdge().getParent())) {
-                        DendrogramEdge parentEdge = vDEdges.get(i).getDendrogramEdge().getParent();
+                    if (!parentEdges.contains(vDEdges.get(i).getDendrogramEdge().getParentDEdge())) {
+                        DendrogramEdge parentEdge = vDEdges.get(i).getDendrogramEdge().getParentDEdge();
                         ViewableDendrogramEdge newVDE = new ViewableDendrogramEdge(parentEdge, nodeToViewable.get(parentEdge.getSourceDendrogramNode()), nodeToViewable.get(parentEdge.getTargetDendrogramNode()));
                         edgesToAdd.add(newVDE);
                         parentEdges.add(parentEdge);
-                    } 
+                    }
                     edgeIndicesToRemove.add(i);
-                    continue INDEXSPOT;
+                    break;
                 }
             }
         }
@@ -349,9 +350,9 @@ INDEXSPOT:for (int i = 0; i < vDEdges.size(); i++) {
 
         for (int i = 0; i < layoutNodes.size(); i++) {
             ViewableDendrogramNode vdn = layoutNodes.get(i).getVDNode();
-            if (vdn.getDendrogramNode().getParent() != null) {
-                ClusterDendrogramNode cdn = (ClusterDendrogramNode) vdn.getDendrogramNode().getParent();
-                if (childIndices != null && cdn == layoutNodes.get(childIndices.get(0)).getVDNode().getDendrogramNode().getParent()) {
+            if (vdn.getDendrogramNode().getParentDNode() != null) {
+                ClusterDendrogramNode cdn = (ClusterDendrogramNode) vdn.getDendrogramNode().getParentDNode();
+                if (childIndices != null && cdn == layoutNodes.get(childIndices.get(0)).getVDNode().getDendrogramNode().getParentDNode()) {
                     childIndices.add(i);
                 }
                 if (cdn.getDistance() < closestDistance) {

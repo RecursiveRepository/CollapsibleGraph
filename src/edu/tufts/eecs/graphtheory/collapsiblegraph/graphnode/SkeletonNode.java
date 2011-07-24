@@ -1,6 +1,6 @@
-package edu.tufts.eecs.graphtheory.collapsiblegraph.node;
+package edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.edge.Edge;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.GraphEdge;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -8,24 +8,24 @@ import java.util.Set;
  *
  * @author Jeremy
  */
-public class SkeletonNode implements Node, Serializable {
+public class SkeletonNode implements GraphNode, Serializable {
     private String name;
-    private Set<Edge> incomingEdgeSet;
-    private Set<Edge> outgoingEdgeSet;
+    private Set<GraphEdge> incomingEdgeSet;
+    private Set<GraphEdge> outgoingEdgeSet;
 
     public SkeletonNode(String name) {
         this.name = name;
     }
 
-    public void setOutgoingEdgeSet(Set<Edge> outgoingEdgeSet) {
+    public void setOutgoingEdgeSet(Set<GraphEdge> outgoingEdgeSet) {
         this.outgoingEdgeSet = outgoingEdgeSet;
     }
 
-    public Set<Edge> getOutgoingEdgeSet() {
+    public Set<GraphEdge> getOutgoingEdgeSet() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Set<Edge> getIncomingEdgeSet() {
+    public Set<GraphEdge> getIncomingEdgeSet() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -58,7 +58,7 @@ public class SkeletonNode implements Node, Serializable {
         return name;
     }
 
-    public double getDistance(Node otherNode) {
+    public double getDistance(GraphNode otherNode) {
         return (double) getLevenshteinDistance(this.getName(), otherNode.getName());
     }
 

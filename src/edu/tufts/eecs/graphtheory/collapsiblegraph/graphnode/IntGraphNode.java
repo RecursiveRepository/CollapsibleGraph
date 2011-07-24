@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.tufts.eecs.graphtheory.collapsiblegraph.node;
+package edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author Jeremy
  */
-public class IntNode extends SkeletonNode implements Serializable{
+public class IntGraphNode extends SkeletonGraphNode implements Serializable{
     
     private final String nodeDescriptor = "Integer Node";
     
@@ -19,7 +19,7 @@ public class IntNode extends SkeletonNode implements Serializable{
     public String getNodeDescriptor() {
         return nodeDescriptor;
     }
-    public IntNode(int value) {
+    public IntGraphNode(int value) {
         super(value+"");
         this.value=value;
     }
@@ -32,11 +32,11 @@ public class IntNode extends SkeletonNode implements Serializable{
         this.value = value;
     }
     
-    public double getDistance(Node otherIntNode) {
-     if(!(otherIntNode instanceof IntNode)) {
+    public double getDistance(GraphNode otherIntNode) {
+     if(!(otherIntNode instanceof IntGraphNode)) {
          throw new RuntimeException("It appears you're trying to compare IntNodes with non-IntNodes.");
      }
-     return Math.abs(value - ((IntNode)otherIntNode).getValue());   
+     return Math.abs(value - ((IntGraphNode)otherIntNode).getValue());   
     }
     
 }

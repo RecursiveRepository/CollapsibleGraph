@@ -1,71 +1,71 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.node.Node;
-import java.io.InvalidObjectException;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
  * @author Jeremy
+ * The ClusterDendrogramNode is a kind of DendrogramNode that acts as glue for the clustering algorithm.
+ * It holds links to its child DendrogramNodes in a List, and stores the distance at which those DendrogramNodes join together. 
  */
-public class ClusterDendrogramNode implements DendrogramNode, Serializable{
+public class ClusterDendrogramNode implements DendrogramNode, Serializable {
 
-    private double distance;
-    private List<DendrogramNode> childNodes;
-    private DendrogramNode parentNode;
-    
-    
-        public ClusterDendrogramNode(Set<DendrogramNode> childNodes, double distance, DendrogramNode parentNode) {
+    private double distance; //The distance at which these childnodes come together int his cluster
+    private List<DendrogramNode> childDNodes; //A list of the childnodes
+    private DendrogramNode parentDNode; //The parent DendrogramNode of this node.
+
+    /**
+     * The constructor for ClusterDendrogramNode. It is required to have the parentNode in the constructor for serialization/deserialization to work.
+     * This may be set to null, but should be set to its correct value before serializing.
+     * @param childNodes The pair of nodes that are being clustered together.
+     * @param distance The distance at which this clustering is occurring
+     * @param parentNode The parentNode, which may be null
+     */
+    public ClusterDendrogramNode(Collection<DendrogramNode> childNodes, double distance, DendrogramNode parentNode) {
         this.distance = distance;
-        this.childNodes = new ArrayList<DendrogramNode>(childNodes);
-        this.parentNode = parentNode;
-    }
-    
-        /**
-         * * 
-         * @param partitionDistance
-         * @return
-         * @deprecated Implementing DendrogramEdges necessitated making the DendrogramSlicer class for this. Use that.
-         */
-        @Deprecated
-        public Set<DendrogramNode> partitionByDistance(double partitionDistance) {
-        Set<DendrogramNode> clusterSet = new HashSet<DendrogramNode>();
-
-        if (partitionDistance >= distance) {
-            clusterSet.add(this);
-        } else {
-            for (DendrogramNode childNode : childNodes) {
-                clusterSet.addAll(childNode.partitionByDistance(partitionDistance));
-            }
-        }
-        return clusterSet;
+        this.childDNodes = new ArrayList<DendrogramNode>(childNodes);
+        this.parentDNode = parentNode;
     }
 
-    public Set<Node> getNodes() {
-        Set<Node> nodeSet = new HashSet<Node>();
-        for(DendrogramNode childNode : childNodes) {
-            nodeSet.addAll(childNode.getNodes());
+    /**Returns the List of data-bearing GraphNodes contained by this DendrogramNode or any of its children. As this can end up traversing the entire tree,
+     * this operation is in O(n) so you may want to avoid it.
+     * @return the List of GraphNodes in this ClusterDendrogramNode's subtree
+     */
+    public List<GraphNode> getGraphNodes() {
+        List<GraphNode> gNodeSet = new ArrayList<GraphNode>();
+        for (DendrogramNode childDNode : childDNodes) {
+            gNodeSet.addAll(childDNode.getGraphNodes());
         }
-        return nodeSet;
+        return gNodeSet;
     }
-    
+
+    /**
+     * 
+     * @return the distance at which this ClusterDendrogramNode was created
+     */
     public double getDistance() {
         return distance;
     }
-    
-    public List<DendrogramNode> getChildNodes() {
-        return childNodes;
+
+    /**
+     * @return the pair of DendrogramNodes that this ClusterDendrogramNode clusters together
+     */
+    public List<DendrogramNode> getChildDNodes() {
+        return childDNodes;
     }
-    
+
+    public DendrogramNode getParentDNode() {
+        return parentDNode;
+    }
+
+    public void setParentDNode(DendrogramNode parentNode) {
+        this.parentDNode = parentNode;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -78,7 +78,7 @@ public class ClusterDendrogramNode implements DendrogramNode, Serializable{
         if (Double.doubleToLongBits(this.distance) != Double.doubleToLongBits(other.distance)) {
             return false;
         }
-        if (this.childNodes != other.childNodes && (this.childNodes == null || !this.childNodes.equals(other.childNodes))) {
+        if (this.childDNodes != other.childDNodes && (this.childDNodes == null || !this.childDNodes.equals(other.childDNodes))) {
             return false;
         }
         return true;
@@ -87,22 +87,10 @@ public class ClusterDendrogramNode implements DendrogramNode, Serializable{
     @Override
     public int hashCode() {
         long sum = 0;
-        for (DendrogramNode dn : childNodes) {
-         sum += dn.hashCode();
+        for (DendrogramNode dn : childDNodes) {
+            sum += dn.hashCode();
         }
         Long sumObject = new Long(sum);
         return sumObject.hashCode();
-    }
-
-    public DendrogramNode getParent() {
-        return parentNode;
-    }
-
-    public void setParent(DendrogramNode parentNode) {
-        this.parentNode = parentNode;
-    }
-    
-        public void readObjectNoData() throws InvalidObjectException {
-        throw new InvalidObjectException("Stream data required");
     }
 }
