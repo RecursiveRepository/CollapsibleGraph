@@ -1,4 +1,3 @@
-
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;

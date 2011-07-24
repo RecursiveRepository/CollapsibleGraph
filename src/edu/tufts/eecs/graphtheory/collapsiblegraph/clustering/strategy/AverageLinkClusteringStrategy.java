@@ -1,16 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import java.util.List;
 
 /**
- * A ClusteringStrategy using the Complete Link method of clustering,
- * wherein the distance between two clusters is defined as the maximum distance
- * between any node in one cluster and any node in the other.
+ * A ClusteringStrategy using the Average Link method of clustering,
+ * wherein the distance between two clusters is defined as the average distance
+ * between the nodes in two clusters
  * @author jeremy
  */
 public class AverageLinkClusteringStrategy extends AbstractClusteringStrategy {

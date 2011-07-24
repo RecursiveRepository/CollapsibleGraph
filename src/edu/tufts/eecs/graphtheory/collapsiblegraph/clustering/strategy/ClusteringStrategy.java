@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
@@ -11,11 +6,17 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import java.util.Set;
 
 /**
- *
+ * An interface to represent any given strategy for Clustering the GraphNodes into a Dendrogram
  * @author Jeremy
  */
 public interface ClusteringStrategy {
 
-public Dendrogram cluster(Set<GraphNode> theNodes, Set<GraphEdge> theEdges);
+/**
+     * 
+     * @param theNodes The set of GraphNodes to be clustered together
+     * @param theEdges The set of GraphEdges to be clustered together
+     * @return A Dendrogram holding the Clustering built buy this ClusteringStrategy
+     */
+public Dendrogram cluster(Set<GraphNode> graphNodes, Set<GraphEdge> graphEdges);
 
 }
