@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 
 /**
- *
+ * This class is a skeleton, barebones implementation of the GraphEdge interface.
+ * This could easily be subclassed to include other features such as edge weight.
  * @author Jeremy
  */
 public class SkeletonGraphEdge implements GraphEdge {
@@ -17,17 +13,30 @@ public class SkeletonGraphEdge implements GraphEdge {
     private GraphNode targetNode;
     private int hashCode;
 
+    /**
+     * 
+     * @param sourceNode the source GraphNode of this edge
+     * @param targetNode the target GraphNode of this edge
+     */
     public SkeletonGraphEdge(GraphNode sourceNode, GraphNode targetNode) {
         this.sourceNode = sourceNode;
         this.targetNode = targetNode;
         generateHashCode();
     }
 
+    /**
+     * 
+     * @param sourceNode the source GraphNode of this Edge
+     */
     public void setSource(GraphNode sourceNode) {
         this.sourceNode=sourceNode;
         generateHashCode();
     }
 
+    /**
+     * 
+     * @param targetNode the target GraphNode of this Edge
+     */
     public void setTarget(GraphNode targetNode) {
         this.targetNode=targetNode;
         generateHashCode();
@@ -40,7 +49,8 @@ public class SkeletonGraphEdge implements GraphEdge {
     public GraphNode getTarget() {
         return targetNode;
     }
-
+     
+    //Hashcode is going to be called a lot. Better we calculate once and return the saved value
     private void generateHashCode() {
         hashCode = (sourceNode.getName()+targetNode.getName()).hashCode();
     }
