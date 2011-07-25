@@ -8,11 +8,14 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
  */
  public class ViewableDendrogramNode {
 
-        TemporaryLayoutNode layoutNode;
-        DendrogramNode dendrogramNode;
-        int diameter;
-        int xCoordinate;
-        int yCoordinate;
+        private DendrogramNode dendrogramNode;
+        private int diameter;
+        private int xCoordinate;
+        private int yCoordinate;
+        private float xForce;
+        private float yForce;
+        private float xVelocity;
+        private float yVelocity;
 
         public ViewableDendrogramNode(DendrogramNode dendrogramNode, int diameter, int xCoordinate, int yCoordinate) {
             this.dendrogramNode = dendrogramNode;
@@ -44,12 +47,35 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
         public void setYCoordinate(int yCoordinate) {
             this.yCoordinate = yCoordinate;
         }
-        
-        public void setLayoutNode(TemporaryLayoutNode layoutNode) {
-            this.layoutNode = layoutNode;
+           public void setXForce(float xForce) {
+            this.xForce = xForce;
         }
         
-        public TemporaryLayoutNode getLayoutNode() {
-            return layoutNode;
+        public float getXForce() {
+            return xForce;
+        }
+        
+        public void setYForce(float yForce) {
+            this.yForce = yForce;
+        }
+        
+        public float getYForce() {
+            return yForce;
+        }
+        
+        public void setXVelocity(float xVelocity) {
+            this.xVelocity = xVelocity;
+        }
+        
+        public float getXVelocity() {
+            return xVelocity;
+        }
+        
+        public void setYVelocity(float yVelocity) {
+            this.yVelocity = yVelocity;
+        }
+        
+        public float getYVelocity() {
+            return yVelocity;
         }
     }

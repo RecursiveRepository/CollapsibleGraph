@@ -84,9 +84,13 @@ public class GraphPapplet extends PApplet {
             graphRendererScreen.draw();
             currentState = ApplicationState.GRAPH_RENDERER_SCREEN;
         }
+        
+        if (eventName.equals("zoomSlider")) {
+            graphRendererScreen.setZoomLevel((double) theEvent.controller().value());
+        }
 
         if (eventName.equals("zoomButton")) {
-            graphRendererScreen.setZoomLevel((double) theEvent.controller().value());
+            
             graphRendererScreen.redraw();
         }
         

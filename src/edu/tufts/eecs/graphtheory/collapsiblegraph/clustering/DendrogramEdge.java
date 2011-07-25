@@ -82,7 +82,7 @@ public class DendrogramEdge implements Serializable {
      * @param parentDEdge The DendrogramEdge that ends up holding this DendrogramEdge, thus becoming its parent in that 
      */
     public void setParentDEdge(DendrogramEdge parentDEdge) {
-        parentDEdge = parentDEdge;
+        this.parentDEdge = parentDEdge;
     }
 
     /**

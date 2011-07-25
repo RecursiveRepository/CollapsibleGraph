@@ -9,7 +9,6 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.persistance.DendrogramLoader;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.persistance.DendrogramSaver;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
