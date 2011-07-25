@@ -168,16 +168,16 @@ public class ForceDirectedLayoutGenerator {
     }
 
     /**
-     * A function to calculate the repulsion between two Nodes. It will only actually change the values on the nodeToChange ViewableDendrogramNode
-     * @param nodeToChange the ViewableDendrogramNode whose values will actually be adjusted by this operation
-     * @param nodeToObserve the ViewableDendrogramNode that's only there to calculate the force on the nodeToChange
+     * A function to calculate the repulsion between two Nodes. It will only actually change the values on the vDNodeToChange ViewableDendrogramNode
+     * @param vDNodeToChange the ViewableDendrogramNode whose values will actually be adjusted by this operation
+     * @param vDNodeToObserve the ViewableDendrogramNode that's only there to calculate the force on the vDNodeToChange
      */
-    private static void calculateColoumbRepulsion(ViewableDendrogramNode nodeToChange, ViewableDendrogramNode nodeToObserve) {
-        float distance = calculateDistance(nodeToChange, nodeToObserve);
+    private static void calculateColoumbRepulsion(ViewableDendrogramNode vDNodeToChange, ViewableDendrogramNode vDNodeToObserve) {
+        float distance = calculateDistance(vDNodeToChange, vDNodeToObserve);
         float totalForce = COULOMB_CONSTANT / (float) Math.pow(distance, 2);
 
-        int xDistance = nodeToChange.getXCoordinate() - nodeToObserve.getXCoordinate();
-        int yDistance = nodeToChange.getYCoordinate() - nodeToObserve.getYCoordinate();
+        int xDistance = vDNodeToChange.getXCoordinate() - vDNodeToObserve.getXCoordinate();
+        int yDistance = vDNodeToChange.getYCoordinate() - vDNodeToObserve.getYCoordinate();
         if (xDistance == 0) {
             xDistance = 1;
         }
@@ -187,8 +187,8 @@ public class ForceDirectedLayoutGenerator {
         float xForce = (xDistance / distance) * totalForce;
         float yForce = (yDistance / distance) * totalForce;
 
-        nodeToChange.setXForce(nodeToChange.getXForce() + xForce);
-        nodeToChange.setYForce(nodeToChange.getYForce() + yForce);
+        vDNodeToChange.setXForce(vDNodeToChange.getXForce() + xForce);
+        vDNodeToChange.setYForce(vDNodeToChange.getYForce() + yForce);
     }
 
     /**
@@ -197,30 +197,30 @@ public class ForceDirectedLayoutGenerator {
      * @param vDEdge the Edge to be processed
      */
     private static void calculateHookeAttraction(ViewableDendrogramEdge vDEdge) {
-        ViewableDendrogramNode sourceNode = vDEdge.getSourceNode();
-        ViewableDendrogramNode targetNode = vDEdge.getTargetNode();
+        ViewableDendrogramNode sourceVDNode = vDEdge.getSourceNode();
+        ViewableDendrogramNode targetVDNode = vDEdge.getTargetNode();
 
-        if (sourceNode == targetNode) {
+        if (sourceVDNode == targetVDNode) {
             return;
         }
-        int xDistance = sourceNode.getXCoordinate() - targetNode.getXCoordinate();
-        int yDistance = sourceNode.getYCoordinate() - targetNode.getYCoordinate();
-        float distance = calculateDistance(sourceNode, targetNode);
+        int xDistance = sourceVDNode.getXCoordinate() - targetVDNode.getXCoordinate();
+        int yDistance = sourceVDNode.getYCoordinate() - targetVDNode.getYCoordinate();
+        float distance = calculateDistance(sourceVDNode, targetVDNode);
 
         float totalForce = HOOKE_CONSTANT * (SPRING_EQUILIBRIUM_DISTANCE - distance);
 
         float sourceXForce = (xDistance / distance) * totalForce;
         float sourceYForce = (yDistance / distance) * totalForce;
-        sourceNode.setXForce(sourceNode.getXForce() + sourceXForce);
-        sourceNode.setYForce(sourceNode.getYForce() + sourceYForce);
+        sourceVDNode.setXForce(sourceVDNode.getXForce() + sourceXForce);
+        sourceVDNode.setYForce(sourceVDNode.getYForce() + sourceYForce);
 
-        xDistance = targetNode.getXCoordinate() - sourceNode.getXCoordinate();
-        yDistance = targetNode.getYCoordinate() - sourceNode.getYCoordinate();
+        xDistance = targetVDNode.getXCoordinate() - sourceVDNode.getXCoordinate();
+        yDistance = targetVDNode.getYCoordinate() - sourceVDNode.getYCoordinate();
 
         float targetXForce = (xDistance / distance) * totalForce;
         float targetYForce = (yDistance / distance) * totalForce;
-        targetNode.setXForce(targetNode.getXForce() + targetXForce);
-        targetNode.setYForce(targetNode.getYForce() + targetYForce);
+        targetVDNode.setXForce(targetVDNode.getXForce() + targetXForce);
+        targetVDNode.setYForce(targetVDNode.getYForce() + targetYForce);
     }
     
     /**
@@ -250,45 +250,44 @@ public class ForceDirectedLayoutGenerator {
         }
 
         //Remove this old cluster from the ViewableDendrogramNodes
-        ViewableDendrogramNode vdn = vDNodes.get(furthestClusterIndex);
+        ViewableDendrogramNode furthestVDNode = vDNodes.get(furthestClusterIndex);
         vDNodes.remove(furthestClusterIndex);
 
-        ClusterDendrogramNode cdn = (ClusterDendrogramNode) vdn.getDendrogramNode();
-        List<DendrogramNode> theChildNodes = cdn.getChildDNodes();
+        ClusterDendrogramNode furthestDNode = (ClusterDendrogramNode) furthestVDNode.getDendrogramNode();
+        DendrogramNode[] childVDNodes = furthestDNode.getChildDNodes().toArray(new DendrogramNode[0]);
 
-        DendrogramNode[] childNodes = theChildNodes.toArray(new DendrogramNode[0]);
         //Add the two child clusters to the ViewableDendrogramNodes
-        ViewableDendrogramNode leftNode = new ViewableDendrogramNode(childNodes[0], DIAMETER, vdn.getXCoordinate() - 50, vdn.getYCoordinate() - 50);
-        nodeToViewable.put(childNodes[0], leftNode);
-        vDNodes.add(leftNode);
+        ViewableDendrogramNode leftVDNode = new ViewableDendrogramNode(childVDNodes[0], DIAMETER, furthestVDNode.getXCoordinate() - 50, furthestVDNode.getYCoordinate() - 50);
+        nodeToViewable.put(childVDNodes[0], leftVDNode);
+        vDNodes.add(leftVDNode);
 
-        ViewableDendrogramNode rightNode = new ViewableDendrogramNode(childNodes[1], DIAMETER, vdn.getXCoordinate() + 50, vdn.getYCoordinate() + 50);
-        nodeToViewable.put(childNodes[1], rightNode);
-        vDNodes.add(rightNode);
+        ViewableDendrogramNode rightVDNode = new ViewableDendrogramNode(childVDNodes[1], DIAMETER, furthestVDNode.getXCoordinate() + 50, furthestVDNode.getYCoordinate() + 50);
+        nodeToViewable.put(childVDNodes[1], rightVDNode);
+        vDNodes.add(rightVDNode);
         
         //Check to see if any of the edges touched the deleted node. If so, replace it with its child edges in the ViewableDendrogramEdges
-        List<Integer> edgeIndicesToRemove = new ArrayList<Integer>();
-        Set<ViewableDendrogramEdge> edgesToAdd = new HashSet<ViewableDendrogramEdge>();
+        List<Integer> vDEdgeIndicesToRemove = new ArrayList<Integer>();
+        Set<ViewableDendrogramEdge> vDEdgesToADd = new HashSet<ViewableDendrogramEdge>();
         for (int i = 0; i < vDEdges.size(); i++) {
-            if (vDEdges.get(i).getSourceNode() == vdn || vDEdges.get(i).getTargetNode() == vdn) {
-                edgeIndicesToRemove.add(i);
+            if (vDEdges.get(i).getSourceNode() == furthestVDNode || vDEdges.get(i).getTargetNode() == furthestVDNode) {
+                vDEdgeIndicesToRemove.add(i);
                 for (DendrogramEdge de : vDEdges.get(i).getDendrogramEdge().getChildEdges()) {
                     ViewableDendrogramEdge newVDE = new ViewableDendrogramEdge(de, nodeToViewable.get(de.getSourceDendrogramNode()), nodeToViewable.get(de.getTargetDendrogramNode()));
-                    edgesToAdd.add(newVDE);
+                    vDEdgesToADd.add(newVDE);
                 }
             }
         }
 
-        for (int i = edgeIndicesToRemove.size() - 1; i >= 0; i--) {
-            vDEdges.remove(edgeIndicesToRemove.get(i).intValue());
+        for (int i = vDEdgeIndicesToRemove.size() - 1; i >= 0; i--) {
+            vDEdges.remove(vDEdgeIndicesToRemove.get(i).intValue());
         }
 
-        vDEdges.addAll(edgesToAdd);
+        vDEdges.addAll(vDEdgesToADd);
         
         //Start the kinetic energy high to make sure that the animation iterates at least once
         kineticEnergy = Float.MAX_VALUE;
 
-        return cdn.getDistance();
+        return furthestDNode.getDistance();
     }
 
     /**
@@ -303,7 +302,7 @@ public class ForceDirectedLayoutGenerator {
             return 0d;
         }
 
-        List<ViewableDendrogramNode> childNodes = new ArrayList<ViewableDendrogramNode>();
+        List<ViewableDendrogramNode> childVDNodes = new ArrayList<ViewableDendrogramNode>();
         int xCoordSum = 0;
         int yCoordSum = 0;
         //Remove these children from vDNodes, and average their x and y coordinates to find the location of the new parent node to show
@@ -314,42 +313,42 @@ public class ForceDirectedLayoutGenerator {
             xCoordSum += thisVDNode.getXCoordinate();
             yCoordSum += thisVDNode.getYCoordinate();
 
-            childNodes.add(thisVDNode);
+            childVDNodes.add(thisVDNode);
             vDNodes.remove(thisVDNode);
         }
 
-        int newXCoord = xCoordSum / childNodes.size();
-        int newYCoord = yCoordSum / childNodes.size();
+        int newXCoord = xCoordSum / childVDNodes.size();
+        int newYCoord = yCoordSum / childVDNodes.size();
 
         //Create a ViewableDendrogramNode to represent that closest parent
-        ViewableDendrogramNode newParent = new ViewableDendrogramNode(childNodes.get(0).getDendrogramNode().getParentDNode(), DIAMETER, newXCoord, newYCoord);
+        ViewableDendrogramNode newParent = new ViewableDendrogramNode(childVDNodes.get(0).getDendrogramNode().getParentDNode(), DIAMETER, newXCoord, newYCoord);
         nodeToViewable.put(newParent.getDendrogramNode(), newParent);
         vDNodes.add(newParent);
 
-        List<Integer> edgeIndicesToRemove = new ArrayList<Integer>();
-        List<ViewableDendrogramEdge> edgesToAdd = new ArrayList<ViewableDendrogramEdge>();
-        Set<DendrogramEdge> parentEdges = new HashSet<DendrogramEdge>();
+        List<Integer> vDEdgeIndicesToRemove = new ArrayList<Integer>();
+        List<ViewableDendrogramEdge> vDEdgesToAdd = new ArrayList<ViewableDendrogramEdge>();
+        Set<DendrogramEdge> parentVDEdges = new HashSet<DendrogramEdge>();
         //Update the edges to reflect our zoom out on nodes
         for (int i = 0; i < vDEdges.size(); i++) {
-            for (ViewableDendrogramNode childNode : childNodes) {
+            for (ViewableDendrogramNode childNode : childVDNodes) {
                 if (vDEdges.get(i).getSourceNode() == childNode || vDEdges.get(i).getTargetNode() == childNode) {
-                    if (!parentEdges.contains(vDEdges.get(i).getDendrogramEdge().getParentDEdge())) {
+                    if (!parentVDEdges.contains(vDEdges.get(i).getDendrogramEdge().getParentDEdge())) {
                         DendrogramEdge parentEdge = vDEdges.get(i).getDendrogramEdge().getParentDEdge();
                         ViewableDendrogramEdge newVDE = new ViewableDendrogramEdge(parentEdge, nodeToViewable.get(parentEdge.getSourceDendrogramNode()), nodeToViewable.get(parentEdge.getTargetDendrogramNode()));
-                        edgesToAdd.add(newVDE);
-                        parentEdges.add(parentEdge);
+                        vDEdgesToAdd.add(newVDE);
+                        parentVDEdges.add(parentEdge);
                     }
-                    edgeIndicesToRemove.add(i);
+                    vDEdgeIndicesToRemove.add(i);
                     break;
                 }
             }
         }
 
-        for (int i = edgeIndicesToRemove.size() - 1; i >= 0; i--) {
-            vDEdges.remove(edgeIndicesToRemove.get(i).intValue());
+        for (int i = vDEdgeIndicesToRemove.size() - 1; i >= 0; i--) {
+            vDEdges.remove(vDEdgeIndicesToRemove.get(i).intValue());
         }
 
-        vDEdges.addAll(edgesToAdd);
+        vDEdges.addAll(vDEdgesToAdd);
         kineticEnergy = 100000f;
 
         return ((ClusterDendrogramNode) newParent.getDendrogramNode()).getDistance();
