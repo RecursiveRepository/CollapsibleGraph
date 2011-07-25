@@ -9,7 +9,7 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.SkeletonGraphEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.IntGraphNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -80,7 +80,7 @@ public class Main {
         Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, inputEdges);
         DendrogramNode root = dendrogram.getRootNode();
        
-        DendrogramSlicer ds = new DendrogramSlicerImpl();
+        DendrogramSlicer ds = new DendrogramSlicer();
        
         
         for(int i = 1; i < 10000000; i= i * 10) {

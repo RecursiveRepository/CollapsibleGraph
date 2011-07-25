@@ -1,7 +1,7 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.windowing;
 
 /**
- *
+ * A Class to represent the states the application can be in
  * @author Jeremy
  */
 public enum ApplicationState {

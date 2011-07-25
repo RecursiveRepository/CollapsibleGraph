@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 
 /**
- *
+ * A very quick and dirty serializer for Dendrograms. Something better really deserves to be written here.
  * @author Jeremy
  */
 public class DendrogramSaver {

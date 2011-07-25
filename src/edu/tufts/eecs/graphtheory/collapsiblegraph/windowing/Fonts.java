@@ -4,7 +4,7 @@ import processing.core.PApplet;
 import processing.core.PFont;
 
 /**
- *
+ * A class to hold all the fonts so we don't need to needlessly create them
  * @author Jeremy
  */
 public class Fonts {

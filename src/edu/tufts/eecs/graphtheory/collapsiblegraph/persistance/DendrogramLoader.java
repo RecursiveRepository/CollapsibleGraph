@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
 /**
- *
+ * A really quick and dirty Deserializer for Dendrograms. There really ought to be something better written than serializing / deserializing Dendrogram objects.
  * @author Jeremy
  */
 public class DendrogramLoader {

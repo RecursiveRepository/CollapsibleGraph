@@ -8,7 +8,7 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicerImpl;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.ApplicationState;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.Fonts;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout.ForceDirectedLayoutGenerator;
@@ -46,7 +46,7 @@ public class GraphRendererScreen {
         this.papplet = papplet;
         this.guiController = guiController;
         viewableDNodes = new ArrayList<ViewableDendrogramNode>();
-        dendrogramSlicer = new DendrogramSlicerImpl();
+        dendrogramSlicer = new DendrogramSlicer();
     }
 
     private void setup() {
