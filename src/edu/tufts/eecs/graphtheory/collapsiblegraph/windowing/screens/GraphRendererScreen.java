@@ -91,7 +91,7 @@ public class GraphRendererScreen {
         zoomOutButton.show();
         zoomInButton.show();
         guiController.draw();
-        viewableDNodes = layoutGenerator.getGraphNodes();
+        viewableDNodes = layoutGenerator.getVDNodes();
         viewableDEdges = layoutGenerator.getGraphEdges();
         
         for (ViewableDendrogramNode viewableNode : viewableDNodes) {

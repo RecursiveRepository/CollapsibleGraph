@@ -3,7 +3,7 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
 
 /**
- *
+ * A class that wraps a DendrogramEdge that holds its visibility data
  * @author Jeremy
  */
 public class ViewableDendrogramEdge {
@@ -12,6 +12,12 @@ public class ViewableDendrogramEdge {
     private ViewableDendrogramNode sourceNode;
     private ViewableDendrogramNode targetNode;
     
+    /**
+     * 
+     * @param dEdge The DendrogramEdge that this ViewableDendrogramEdge wraps
+     * @param sourceNode The ViewableDendrogramNode that this edge leads out from
+     * @param targetNode The ViewableDendrogramNode that this edge goes into
+     */
     public ViewableDendrogramEdge(DendrogramEdge dEdge, ViewableDendrogramNode sourceNode, ViewableDendrogramNode targetNode) {
         this.dEdge = dEdge;
         this.sourceNode = sourceNode; 

@@ -3,7 +3,7 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.graphlayout;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 
 /**
- *
+ * A class that wraps a DendrogramNode to contain the data that makes this viewable
  * @author Jeremy
  */
  public class ViewableDendrogramNode {
