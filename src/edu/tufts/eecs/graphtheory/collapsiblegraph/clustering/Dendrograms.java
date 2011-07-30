@@ -7,7 +7,7 @@ import java.io.Serializable;
  * and one for the GraphEdges. It provides access to both by giving a link to the root of those Dendrograms.
  * @author Jeremy
  */
-public class Dendrogram implements Serializable {
+public class Dendrograms implements Serializable {
     
     private DendrogramNode rootNode;
     private DendrogramEdge rootEdge;
@@ -17,7 +17,7 @@ public class Dendrogram implements Serializable {
      * @param rootNode The DendrogramNode that sits at the root of the GraphNode dendrogram
      * @param rootEdge The DendrogramEdge that sits at the root of the GraphEdge dendrogram
      */
-    public Dendrogram (DendrogramNode rootNode, DendrogramEdge rootEdge) {
+    public Dendrograms (DendrogramNode rootNode, DendrogramEdge rootEdge) {
         this.rootNode = rootNode;
         this.rootEdge = rootEdge;
     }

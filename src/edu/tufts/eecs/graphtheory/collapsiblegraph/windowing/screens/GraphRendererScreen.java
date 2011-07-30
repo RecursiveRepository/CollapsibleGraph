@@ -4,7 +4,7 @@ import controlP5.Button;
 import controlP5.ControlP5;
 import controlP5.Slider;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
@@ -30,12 +30,11 @@ public class GraphRendererScreen {
     private Button zoomButton;
     private Button zoomOutButton;
     private Button zoomInButton;
-    private Dendrogram dendrogram;
+    private Dendrograms dendrogram;
     private DendrogramSlicer dendrogramSlicer;
     double partitionDistance = 0.0F;
     private List<ViewableDendrogramEdge> viewableDEdges;
     private List<ViewableDendrogramNode> viewableDNodes;
-    private boolean recentlyRendered = false;
     private ViewableDendrogramNode selectedNode;
     private List<GraphNode> selectedDataNodes;
     private ForceDirectedLayoutGenerator layoutGenerator = new ForceDirectedLayoutGenerator();
@@ -74,12 +73,12 @@ public class GraphRendererScreen {
         instance = new GraphRendererScreen(papplet, guiController);
         return instance;
     }
-
+    
     public static GraphRendererScreen getGraphRendererScreen() {
         return instance;
     }
 
-    public void setDendrogram(Dendrogram dendrogram) {
+    public void setDendrogram(Dendrograms dendrogram) {
         this.dendrogram = dendrogram;
         setup();
     }
@@ -120,15 +119,16 @@ public class GraphRendererScreen {
         }
         
         if(selectedDataNodes!=null && !selectedDataNodes.isEmpty()) {
-        String nodes = "";
+        StringBuilder nodeString = new StringBuilder();
         for(GraphNode selectedDataNode : selectedDataNodes) {
-            nodes = nodes + selectedDataNode.toString() + ",";
+            nodeString.append(selectedDataNode.toString());
+            nodeString.append("'");
         }
         papplet.fill(0, 0, 255);
         papplet.line(0, 500, 1024, 500);
         papplet.textFont(Fonts.getMediumFont());
         papplet.textAlign(papplet.LEFT);
-        papplet.text(nodes, 400 , 520);
+        papplet.text(nodeString.toString(), 400 , 520);
         }
         
         layoutGenerator.iterate();
@@ -158,6 +158,4 @@ public class GraphRendererScreen {
 
         draw();
     }
-
-   
 }

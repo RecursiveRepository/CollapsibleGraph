@@ -1,7 +1,7 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.LeafDendrogramNode;
@@ -39,7 +39,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
      * @param graphNodes The set of logical nodes that should be arranged into a dendrogram.
      * @return DendrogramNode that is the root of the Dendrogram created by clustering
      */
-    public final Dendrogram cluster(final Set<GraphNode> graphNodes, final Set<GraphEdge> graphEdges) {
+    public final Dendrograms cluster(final Set<GraphNode> graphNodes, final Set<GraphEdge> graphEdges) {
         
         //An ExecutorService to oversee the multi-threaded calculation of distances
         ExecutorService distanceExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
@@ -269,7 +269,7 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
 
         }
         distanceExecutor.shutdown();
-        Dendrogram finalDendrogram = new Dendrogram(dendrogramNodes[mostRecentDNodeIndex], dendrogramEdges[0]);
+        Dendrograms finalDendrogram = new Dendrograms(dendrogramNodes[mostRecentDNodeIndex], dendrogramEdges[0]);
         return finalDendrogram;
     }
 
@@ -341,7 +341,6 @@ public abstract class AbstractClusteringStrategy implements ClusteringStrategy {
                 Set<Integer> indicesToCheck) {
             this.minIndexToCheck = minIndexToCheck;
             this.maxIndexToCheck = maxIndexToCheck;
-            this.dendrogramNodes = dendrogramNodes;
             this.topClusterList = topClusterList;
             this.indicesToCheck = indicesToCheck;
         }

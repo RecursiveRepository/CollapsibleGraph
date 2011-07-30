@@ -5,7 +5,7 @@ import controlP5.ControlP5;
 import controlP5.ControlWindow;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.ApplicationState;
 import controlP5.Textfield;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
@@ -100,12 +100,12 @@ public class MainScreen {
         mainScreenState = MainScreenState.SELECT_PREPROCESSED_GRAPH;
     }
 
-    public Dendrogram processGraph() {
-        Dendrogram theirDendrogram;
+    public Dendrograms processGraph() {
+        Dendrograms theirDendrogram;
         try {
         FileInputStream theirFileStream = new FileInputStream(graphLocation.getText());
         ObjectInputStream theirDendrogramStream = new ObjectInputStream(theirFileStream);
-        theirDendrogram = (Dendrogram)theirDendrogramStream.readObject();
+        theirDendrogram = (Dendrograms)theirDendrogramStream.readObject();
         theirFileStream.close();
         theirDendrogramStream.close();
         

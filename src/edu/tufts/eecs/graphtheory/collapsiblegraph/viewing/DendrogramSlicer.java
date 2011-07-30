@@ -1,7 +1,7 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.viewing;
 
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.ClusterDendrogramNode;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.LeafDendrogramNode;
@@ -25,7 +25,7 @@ public class DendrogramSlicer {
      * @param dendrogram the Dendrogram to be sliced
      * @return the DendrogramSlice that represents how the Dendrogram looks at exactly that distance
      */
-    public DendrogramSlice partitionByDistance(double distance, Dendrogram dendrogram) {
+    public DendrogramSlice partitionByDistance(double distance, Dendrograms dendrogram) {
         DendrogramNode rootDNode = dendrogram.getRootNode();
         DendrogramEdge rootDEdge = dendrogram.getRootEdge();
 

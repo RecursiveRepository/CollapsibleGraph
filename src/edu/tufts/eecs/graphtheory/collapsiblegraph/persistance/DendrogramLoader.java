@@ -1,6 +1,6 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.persistance;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
@@ -11,15 +11,15 @@ import java.io.ObjectInputStream;
  */
 public class DendrogramLoader {
     
-    public static Dendrogram loadDendrogram(String filePath) {
+    public static Dendrograms loadDendrogram(String filePath) {
         File inputFile = new File(filePath);
         FileInputStream fis = null;
         ObjectInputStream ois = null;
-        Dendrogram retrievedDendrogram = null;
+        Dendrograms retrievedDendrogram = null;
         try {
             fis = new FileInputStream(inputFile);
             ois = new ObjectInputStream(fis);
-            retrievedDendrogram = (Dendrogram)ois.readObject();
+            retrievedDendrogram = (Dendrograms)ois.readObject();
         } catch ( Exception e ) {
             e.printStackTrace();
         }

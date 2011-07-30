@@ -1,6 +1,6 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.persistance;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
  */
 public class DendrogramSaver {
 
-    public static void saveDendrogram(Dendrogram dendrogramToSave, String filePath) {
+    public static void saveDendrogram(Dendrograms dendrogramToSave, String filePath) {
 
         File outputFile = new File(filePath);
         FileOutputStream outputStream = null;

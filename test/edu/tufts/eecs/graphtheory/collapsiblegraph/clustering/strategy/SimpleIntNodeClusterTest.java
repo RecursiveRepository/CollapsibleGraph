@@ -1,6 +1,6 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.GraphEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphedge.SkeletonGraphEdge;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.IntGraphNode;
@@ -41,11 +41,11 @@ public class SimpleIntNodeClusterTest {
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(3)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(1)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
-        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
+        Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
         DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver.txt");
-        Dendrogram otherDendrogram = DendrogramLoader.loadDendrogram("//home//jeremy//saver.txt");
+        Dendrograms otherDendrogram = DendrogramLoader.loadDendrogram("//home//jeremy//saver.txt");
         
         System.out.println("All done.");
     }
@@ -68,11 +68,11 @@ public class SimpleIntNodeClusterTest {
                 dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(1)));
                 dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(4)));
-        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
+        Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
         DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver2.txt");
-        Dendrogram otherDendrogram = DendrogramLoader.loadDendrogram("//home//jeremy//saver2.txt");
+        Dendrograms otherDendrogram = DendrogramLoader.loadDendrogram("//home//jeremy//saver2.txt");
         
         System.out.println("All done.");
     }
@@ -96,7 +96,7 @@ public class SimpleIntNodeClusterTest {
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(1)));
                 dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(4)));
                 dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(4), inputNodeList.get(5)));
-        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
+        Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
         DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver3.txt");
@@ -123,7 +123,7 @@ public class SimpleIntNodeClusterTest {
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(3)));
                 
-        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
+        Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
         DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver5.txt");

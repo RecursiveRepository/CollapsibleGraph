@@ -1,6 +1,6 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrogram;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.DendrogramNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.ClusteringStrategy;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.SingleLinkClusteringStrategy;
@@ -77,7 +77,7 @@ public class Main {
         System.out.println("Edges: " + inputEdges.size());
        
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
-        Dendrogram dendrogram = singleLinkStrategy.cluster(inputNodes, inputEdges);
+        Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, inputEdges);
         DendrogramNode root = dendrogram.getRootNode();
        
         DendrogramSlicer ds = new DendrogramSlicer();
