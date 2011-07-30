@@ -44,8 +44,8 @@ public class SimpleIntNodeClusterTest {
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver.txt");
-        Dendrograms otherDendrogram = DendrogramLoader.loadDendrogram("//home//jeremy//saver.txt");
+        DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver.txt");
+        Dendrograms otherDendrogram = DendrogramLoader.loadDendrogram("c://graphs//saver.txt");
         
         System.out.println("All done.");
     }
@@ -71,8 +71,8 @@ public class SimpleIntNodeClusterTest {
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver2.txt");
-        Dendrograms otherDendrogram = DendrogramLoader.loadDendrogram("//home//jeremy//saver2.txt");
+        DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver2.txt");
+        Dendrograms otherDendrogram = DendrogramLoader.loadDendrogram("c://graphs//saver2.txt");
         
         System.out.println("All done.");
     }
@@ -99,7 +99,7 @@ public class SimpleIntNodeClusterTest {
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver3.txt");
+        DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver3.txt");
         
 
         System.out.println("All done.");
@@ -126,7 +126,7 @@ public class SimpleIntNodeClusterTest {
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver5.txt");
+        DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver5.txt");
         
 
         System.out.println("All done.");

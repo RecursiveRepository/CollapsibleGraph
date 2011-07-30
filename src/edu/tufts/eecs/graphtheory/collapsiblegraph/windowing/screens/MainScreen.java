@@ -99,6 +99,14 @@ public class MainScreen {
     public void loadGraph() {
         mainScreenState = MainScreenState.SELECT_PREPROCESSED_GRAPH;
     }
+    
+    public void reset() {
+        graphLocation.hide();
+        submitButton.hide();
+        graphLocation.setText("");
+        guiController.draw();
+        
+    }
 
     public Dendrograms processGraph() {
         Dendrograms theirDendrogram;
@@ -109,10 +117,7 @@ public class MainScreen {
         theirFileStream.close();
         theirDendrogramStream.close();
         
-        graphLocation.hide();
-        submitButton.hide();
-        guiController.draw();
-        
+     
         } catch ( Exception e) {
             e.printStackTrace(System.err);
             return null;

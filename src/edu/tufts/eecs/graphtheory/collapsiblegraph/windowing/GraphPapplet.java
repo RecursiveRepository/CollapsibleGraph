@@ -2,6 +2,7 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.windowing;
 
 import controlP5.ControlEvent;
 import controlP5.ControlP5;
+import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.screens.GraphRendererScreen;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.screens.IntroScreen;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.screens.MainScreen;
@@ -18,7 +19,7 @@ public class GraphPapplet extends PApplet {
     private IntroScreen introScreen; //A link to the Reference screen
     private GraphRendererScreen graphRendererScreen; //A link to the Graph Renderer screen
     private ControlP5 guiController;
-    
+
     /**
      * Initialize the application
      */
@@ -43,7 +44,7 @@ public class GraphPapplet extends PApplet {
      * The loop function that's called many times a second. It's been changed to a switch statement so that the screen corresponding
      * to the current application state may draw its own routine
      */
-    @Override 
+    @Override
     public void draw() {
         switch (currentState) {
             case INTRO_SCREEN: {
@@ -59,8 +60,8 @@ public class GraphPapplet extends PApplet {
             case GRAPH_RENDERER_SCREEN: {
                 currentState = graphRendererScreen.draw();
                 break;
-            } 
-                
+            }
+
         }
     }
 
@@ -73,38 +74,45 @@ public class GraphPapplet extends PApplet {
         if (eventName.equals("loadGraph")) {
             mainScreen.loadGraph();
         }
-        
+
         if (eventName.equals("buildGraph")) {
             currentState = ApplicationState.GRAPH_BUILDER_SCREEN;
         }
 
         if (eventName.equals("submit")) {
-            graphRendererScreen.setDendrogram(mainScreen.processGraph());
-            graphRendererScreen.redraw();
-            graphRendererScreen.draw();
-            currentState = ApplicationState.GRAPH_RENDERER_SCREEN;
+            Dendrograms dendrograms = mainScreen.processGraph();
+            if (dendrograms != null) {
+                graphRendererScreen.setDendrogram(mainScreen.processGraph());
+                mainScreen.reset();
+                graphRendererScreen.redraw();
+                graphRendererScreen.draw();
+                currentState = ApplicationState.GRAPH_RENDERER_SCREEN;
+            }
         }
-        
+
         if (eventName.equals("zoomSlider")) {
             graphRendererScreen.setZoomLevel((double) theEvent.controller().value());
         }
 
         if (eventName.equals("zoomButton")) {
-            
+
             graphRendererScreen.redraw();
         }
-        
+
         if (eventName.equals("zoomInButton")) {
-            System.out.println("Zoom pressed.");
             graphRendererScreen.zoomIn();
         }
         if (eventName.equals("zoomOutButton")) {
-            System.out.println("Zoom pressed.");
             graphRendererScreen.zoomOut();
+        }
+
+        if (eventName.equals("mainMenuButton")) {
+            graphRendererScreen.reset();
+            currentState = ApplicationState.MAIN_SCREEN;
         }
     }
 
     public static void main(String[] argv) {
-      PApplet.main(new String[]{"edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.GraphPapplet"});
+        PApplet.main(new String[]{"edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.GraphPapplet"});
     }
 }

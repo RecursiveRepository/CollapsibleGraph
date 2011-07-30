@@ -5,7 +5,6 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.CollapsibleGraphConstants;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.ApplicationState;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.windowing.Fonts;
 import processing.core.PApplet;
-import processing.core.PFont;
 
 /**
  *
@@ -41,10 +40,7 @@ public class IntroScreen {
         papplet.text("Collapsible Graph System", 512, 150);
         papplet.text(CollapsibleGraphConstants.VERSION_NUMBER, 512, 180);
 
-        papplet.textFont(Fonts.getMediumFont());
-        papplet.text("A Master's Project", 512, 400);
-        papplet.text("by Jeremy Freeman", 512, 430);
-
+        
         papplet.textFont(Fonts.getSmallFont());
         papplet.text("Click anywhere to continue", 512, 550);
         return ApplicationState.INTRO_SCREEN;
