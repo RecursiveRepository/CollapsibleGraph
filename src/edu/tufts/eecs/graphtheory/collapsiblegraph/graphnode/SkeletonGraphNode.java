@@ -7,8 +7,9 @@ import java.io.Serializable;
  * @author Jeremy
  */
 public class SkeletonGraphNode implements GraphNode, Serializable {
+
     private String name;
-   
+
     /**
      * 
      * @param name the name of this node
@@ -30,7 +31,6 @@ public class SkeletonGraphNode implements GraphNode, Serializable {
         return (double) Math.abs(name.length() - otherNode.getName().length());
     }
 
-    
     @Override
     public int hashCode() {
         return name.hashCode();
@@ -56,5 +56,19 @@ public class SkeletonGraphNode implements GraphNode, Serializable {
         return name;
     }
 
-    
+    public GraphNodeFactory getGraphNodeFactory() {
+        return new SkeletonGraphNodeFactory();
+    }
+
+    public class SkeletonGraphNodeFactory implements GraphNodeFactory {
+
+        public GraphNode buildGraphNodeFromString(String s) throws GraphNodeFactoryException {
+            
+            if(s==null) {
+                throw new GraphNodeFactoryException("You may not initialize a node with null value.");
+            }
+            
+            return new SkeletonGraphNode(s);
+        }
+    }
 }

@@ -47,4 +47,21 @@ public class IntGraphNode extends SkeletonGraphNode implements Serializable{
      return Math.abs(value - ((IntGraphNode)otherIntNode).getValue());   
     }
     
+    public GraphNodeFactory getGraphNodeFactory() {
+        return new IntGraphNodeFactory();
+    }
+
+    public class IntGraphNodeFactory implements GraphNodeFactory {
+
+        public GraphNode buildGraphNodeFromString(String s) throws GraphNodeFactoryException {
+            int value;
+            try {
+                value = Integer.parseInt(s);
+            } catch (Exception e) {
+                throw new GraphNodeFactoryException("Problem parsing first integer: " + s);
+            }
+
+            return new IntGraphNode(value);
+        }
+    }
 }
