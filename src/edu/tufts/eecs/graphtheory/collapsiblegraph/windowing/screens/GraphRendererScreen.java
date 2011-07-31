@@ -37,7 +37,7 @@ public class GraphRendererScreen {
     private List<ViewableDendrogramEdge> viewableDEdges;
     private List<ViewableDendrogramNode> viewableDNodes;
     private ViewableDendrogramNode selectedNode;
-    private List<GraphNode> selectedDataNodes;
+    private List<GraphNode> selectedDataNodes = new ArrayList<GraphNode>();
     private ForceDirectedLayoutGenerator layoutGenerator = new ForceDirectedLayoutGenerator();
 
     private GraphRendererScreen(PApplet papplet, ControlP5 guiController) {
@@ -132,7 +132,7 @@ public class GraphRendererScreen {
 
         }
 
-        if (selectedDataNodes != null && !selectedDataNodes.isEmpty()) {
+        if (!selectedDataNodes.isEmpty()) {
             StringBuilder nodeString = new StringBuilder();
             for (GraphNode selectedDataNode : selectedDataNodes) {
                 nodeString.append(selectedDataNode.toString());

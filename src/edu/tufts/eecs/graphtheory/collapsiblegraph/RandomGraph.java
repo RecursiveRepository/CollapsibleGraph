@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author Jeremy
  */
-public class Main {
+public class RandomGraph {
 
   /*  public static void main(String[] argv) {
         CollapsibleGraph cg = null;
