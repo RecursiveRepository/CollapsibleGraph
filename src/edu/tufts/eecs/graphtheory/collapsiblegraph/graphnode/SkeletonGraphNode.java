@@ -17,6 +17,10 @@ public class SkeletonGraphNode implements GraphNode, Serializable {
     public SkeletonGraphNode(String name) {
         this.name = name;
     }
+    
+    SkeletonGraphNode() {
+        
+    }
 
     public String getName() {
         return name;
@@ -56,6 +60,7 @@ public class SkeletonGraphNode implements GraphNode, Serializable {
         return name;
     }
 
+    @Override
     public GraphNodeFactory getGraphNodeFactory() {
         return new SkeletonGraphNodeFactory();
     }

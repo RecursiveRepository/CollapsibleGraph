@@ -18,6 +18,12 @@ public interface GraphNode {
      */
     public double getDistance(GraphNode otherNode);
     
+    /**
+     * A function that returns a factory to make this type of GraphNode out of Strings.
+     * @return the GraphNodeFactory
+     */
+    public GraphNodeFactory getGraphNodeFactory();
+    
     @Override
     public int hashCode();
     @Override 

@@ -1,9 +1,5 @@
 package edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode;
 
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.AverageLinkClusteringStrategy;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.ClusteringStrategy;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.CompleteLinkClusteringStrategy;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.strategy.SingleLinkClusteringStrategy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +32,7 @@ public class GraphNodes {
             return null;
         }
         try {
-        return (GraphNode)graphNodeMap.get(graphNodeName).newInstance();
+        return (GraphNode)graphNodeClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }

@@ -82,7 +82,7 @@ public class GraphPapplet extends PApplet {
         if (eventName.equals("submit")) {
             Dendrograms dendrograms = mainScreen.processGraph();
             if (dendrograms != null) {
-                graphRendererScreen.setDendrogram(mainScreen.processGraph());
+                graphRendererScreen.setDendrogram(dendrograms);
                 mainScreen.reset();
                 graphRendererScreen.redraw();
                 graphRendererScreen.draw();

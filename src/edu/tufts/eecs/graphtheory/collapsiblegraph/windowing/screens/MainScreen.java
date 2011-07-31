@@ -67,7 +67,7 @@ public class MainScreen {
             case INITIAL: {
                 papplet.background(0);
                 loadGraphButton.show();
-                buildGraphButton.show();
+            //    buildGraphButton.show();
                 guiController.draw();
 
 
@@ -79,7 +79,7 @@ public class MainScreen {
             case SELECT_PREPROCESSED_GRAPH: {
                 papplet.background(0);
                 loadGraphButton.hide();
-                buildGraphButton.hide();
+            //    buildGraphButton.hide();
                 graphLocation.show();
                 graphLocation.setFocus(true);
                 submitButton.show();

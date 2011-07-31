@@ -8,11 +8,11 @@ import edu.tufts.eecs.graphtheory.collapsiblegraph.graphnode.GraphNode;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.persistance.DendrogramSaver;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlice;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
-import edu.tufts.eecs.graphtheory.collapsiblegraph.viewing.DendrogramSlicer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -21,9 +21,9 @@ import org.junit.Test;
  */
 public class SimpleIntPairNodeClusterTest {
 
-    int inputList[][] = {{1,1}, {2,1}, {4,4}, {10,1}, {3,3}};
+    int inputList[][] = {{1, 1}, {2, 1}, {4, 4}, {10, 1}, {3, 3}};
 
-     @Test
+    @Test
     public void testThirdCluster() {
 
         Set<GraphNode> inputNodes = new HashSet<GraphNode>();
@@ -42,12 +42,16 @@ public class SimpleIntPairNodeClusterTest {
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(1)));
         //        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(4)));
-          //      dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(4), inputNodeList.get(5)));
+        //      dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(4), inputNodeList.get(5)));
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "//home//jeremy//saver4.txt");
-
+        try {
+            DendrogramSaver.saveDendrogram(dendrogram, "c://graphs/saver4.txt");
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            Assert.fail("Threw an exception saving graph.");
+        }
 
         System.out.println("All done.");
     }

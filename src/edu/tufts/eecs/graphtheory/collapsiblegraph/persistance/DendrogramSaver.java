@@ -3,6 +3,7 @@ package edu.tufts.eecs.graphtheory.collapsiblegraph.persistance;
 import edu.tufts.eecs.graphtheory.collapsiblegraph.clustering.Dendrograms;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 /**
@@ -11,7 +12,7 @@ import java.io.ObjectOutputStream;
  */
 public class DendrogramSaver {
 
-    public static void saveDendrogram(Dendrograms dendrogramToSave, String filePath) {
+    public static void saveDendrogram(Dendrograms dendrogramToSave, String filePath) throws IOException {
 
         File outputFile = new File(filePath);
         FileOutputStream outputStream = null;
@@ -24,16 +25,12 @@ public class DendrogramSaver {
             outputStream = new FileOutputStream(outputFile);
             objectOutputStream = new ObjectOutputStream(outputStream);
             objectOutputStream.writeObject(dendrogramToSave);
-
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-
         } finally {
             try {
                 objectOutputStream.close();
                 outputStream.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
 

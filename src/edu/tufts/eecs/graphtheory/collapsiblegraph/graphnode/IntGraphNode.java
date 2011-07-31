@@ -47,6 +47,7 @@ public class IntGraphNode extends SkeletonGraphNode implements Serializable{
      return Math.abs(value - ((IntGraphNode)otherIntNode).getValue());   
     }
     
+    @Override
     public GraphNodeFactory getGraphNodeFactory() {
         return new IntGraphNodeFactory();
     }

@@ -9,7 +9,6 @@ import java.io.Serializable;
  */
 public class IntPairGraphNode extends SkeletonGraphNode implements Serializable {
 
-    private final String nodeDescriptor = "Integer Node";
     private int xValue;
     private int yValue;
 
@@ -23,6 +22,9 @@ public class IntPairGraphNode extends SkeletonGraphNode implements Serializable 
         this.xValue = xValue;
         this.yValue = yValue;
     }
+    
+    IntPairGraphNode() {
+    }
 
     public int getXValue() {
         return xValue;
@@ -30,10 +32,6 @@ public class IntPairGraphNode extends SkeletonGraphNode implements Serializable 
 
     public int getYValue() {
         return yValue;
-    }
-
-    public String getNodeDescriptor() {
-        return nodeDescriptor;
     }
 
     public void setXValue(int xValue) {
@@ -59,6 +57,7 @@ public class IntPairGraphNode extends SkeletonGraphNode implements Serializable 
         return Math.sqrt(Math.pow((this.getXValue() - otherINode.getXValue()), 2) + Math.pow((this.getYValue() - otherINode.getYValue()), 2));
     }
 
+    @Override
     public GraphNodeFactory getGraphNodeFactory() {
         return new IntPairGraphNodeFactory();
     }

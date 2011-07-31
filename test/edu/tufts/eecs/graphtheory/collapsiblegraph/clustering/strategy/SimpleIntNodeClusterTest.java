@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -24,17 +25,18 @@ public class SimpleIntNodeClusterTest {
     private int[] inputIntegers = {2, 4, 8, 16, 32};
     private int[] inputIntegers2 = {2, 4, 8, 16, 32, 64, 128};
     private int[] inputIntegers3 = {2, 4, 8, 16};
+
     @Test
     public void testCluster() {
         Set<GraphNode> inputNodes = new HashSet<GraphNode>();
         List<GraphNode> inputNodeList = new ArrayList<GraphNode>();
-        
+
         for (int i = 0; i < inputIntegers.length; i++) {
             GraphNode newNode = new IntGraphNode(inputIntegers[i]);
             inputNodes.add(newNode);
             inputNodeList.add(newNode);
         }
-        
+
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         Set<GraphEdge> dendrogramEdges = new HashSet<GraphEdge>();
         //2->4, 2->16
@@ -44,36 +46,46 @@ public class SimpleIntNodeClusterTest {
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver.txt");
+        try {
+            DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver.txt");
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            Assert.fail("Threw an exception saving graph.");
+        }
         Dendrograms otherDendrogram = DendrogramLoader.loadDendrogram("c://graphs//saver.txt");
-        
+
         System.out.println("All done.");
     }
-    
-        @Test
+
+    @Test
     public void testSecondCluster() {
         Set<GraphNode> inputNodes = new HashSet<GraphNode>();
         List<GraphNode> inputNodeList = new ArrayList<GraphNode>();
-        
+
         for (int i = 0; i < inputIntegers.length; i++) {
             GraphNode newNode = new IntGraphNode(inputIntegers[i]);
             inputNodes.add(newNode);
             inputNodeList.add(newNode);
         }
-        
+
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         Set<GraphEdge> dendrogramEdges = new HashSet<GraphEdge>();
         //2->4, 2->16
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(3)));
-                dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
+        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(1)));
-                dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(4)));
+        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(4)));
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver2.txt");
+        try {
+            DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver2.txt");
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            Assert.fail("Threw an exception saving graph.");
+        }
         Dendrograms otherDendrogram = DendrogramLoader.loadDendrogram("c://graphs//saver2.txt");
-        
+
         System.out.println("All done.");
     }
 
@@ -92,20 +104,25 @@ public class SimpleIntNodeClusterTest {
         Set<GraphEdge> dendrogramEdges = new HashSet<GraphEdge>();
         //2->4, 2->16
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(3)));
-                dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
+        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(1)));
-                dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(4)));
-                dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(4), inputNodeList.get(5)));
+        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(4)));
+        dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(4), inputNodeList.get(5)));
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver3.txt");
-        
+        try {
+            DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver3.txt");
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            Assert.fail("Threw an exception saving graph.");
+        }
+
 
         System.out.println("All done.");
     }
-    
-     @Test
+
+    @Test
     public void makeStupidCluster() {
         Set<GraphNode> inputNodes = new HashSet<GraphNode>();
         List<GraphNode> inputNodeList = new ArrayList<GraphNode>();
@@ -115,19 +132,23 @@ public class SimpleIntNodeClusterTest {
             inputNodes.add(newNode);
             inputNodeList.add(newNode);
         }
- 
+
         ClusteringStrategy singleLinkStrategy = new SingleLinkClusteringStrategy();
         Set<GraphEdge> dendrogramEdges = new HashSet<GraphEdge>();
         //2->4, 2->16
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(1)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(2)));
         dendrogramEdges.add(new SkeletonGraphEdge(inputNodeList.get(0), inputNodeList.get(3)));
-                
+
         Dendrograms dendrogram = singleLinkStrategy.cluster(inputNodes, dendrogramEdges);
         DendrogramSlicer ds = new DendrogramSlicer();
         DendrogramSlice results = ds.partitionByDistance(5.0, dendrogram);
-        DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver5.txt");
-        
+        try {
+            DendrogramSaver.saveDendrogram(dendrogram, "c://graphs//saver5.txt");
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            Assert.fail("Threw an exception saving graph.");
+        }
 
         System.out.println("All done.");
     }
